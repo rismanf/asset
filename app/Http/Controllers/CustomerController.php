@@ -26,9 +26,8 @@ class CustomerController extends Controller
 
         if (Auth::check()) {
             if ($request->ajax()) {
-                $data = Customer::with('site')->get();
+                $data = Customer::with('site')->orderby('id','desc');
                 return DataTables($data)
-                    ->addIndexColumn()
                     ->addColumn('action', function ($row) {
                         $btn = '<a href="' . route('customer.edit', $row->id) . '" class="edit btn btn-primary">Edit</a> ';
                         $btn .= '<a href="' . route('customer.delete', $row->id) . '"  class="delete btn btn-danger">Delete</a>';

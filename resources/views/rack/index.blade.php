@@ -52,11 +52,12 @@
                     <table class="table yajra-dt">
                         <thead>
                             <tr>
-                                <th>No</th>
                                 <th>Name</th>
                                 <th>Customer</th>
-                                <th>Site</th>
-                                <th>Floor</th>
+                                <th>Location</th>
+                                <th>Power Default</th>
+                                <th>Power</th>
+                                <th>Power Available</th>
                                 <th>Status</th>
                                 <th width="280px">Action</th>
                             </tr>
@@ -89,10 +90,7 @@
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('rack.index') }}",
-                columns: [{
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex'
-                    },
+                columns: [
                     {
                         data: 'rack_name',
                         name: 'rack_name'
@@ -106,8 +104,16 @@
                         name: 'site'
                     },
                     {
-                        data: 'floor',
-                        name: 'floor'
+                        data: 'rackpowerdefault',
+                        name: 'rackpowerdefault'
+                    },
+                    {
+                        data: 'rack_va',
+                        name: 'rack_va'
+                    },
+                    {
+                        data: 'rackavailable',
+                        name: 'rackavailable'
                     },
                     {
                         data: 'status',

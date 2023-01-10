@@ -42,6 +42,14 @@
             </a>
           </li>
           <li class="nav-item">
+            <a href="{{ route('permissions.index') }}" class="nav-link @yield('permissions')">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>
+                Permission
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
             <a href="{{ route('site.index') }}" class="nav-link @yield('site')">
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>
@@ -78,6 +86,22 @@
               <i class="nav-icon fas fa-tachometer-alt"></i>
               <p>
                 Rack
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{{ route('checkpower.index') }}" class="nav-link @yield('checkpower')">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>
+                Check Power
+              </p>
+            </a>
+          </li>
+          <li class="nav-item">
+            <a href="{{ route('movein.index') }}" class="nav-link @yield('movein')">
+              <i class="nav-icon fas fa-tachometer-alt"></i>
+              <p>
+                Move-in
               </p>
             </a>
           </li>

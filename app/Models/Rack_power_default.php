@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Rack_power_default extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'power_default',
+    ];
 }

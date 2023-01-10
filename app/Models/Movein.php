@@ -6,11 +6,28 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
-class Rack_power extends Model
+class Movein extends Model
 {
     use HasFactory;
 
-    protected $guarded  = ['id'];
+    protected $primaryKey = 'id';
+    
+    protected $fillable = [
+        'code_movein',
+        'ticket_number',
+        'customer_id',
+        'pic_name',
+        'pic_phone',
+        'installation_date',
+        'site_id',
+        'floor_id',
+        'flagging',
+        'status_id',
+        'created_by_id',
+        'updated_by_id',
+        'process_date',
+        'approve_date',
+    ];
 
     protected static function boot() {
         parent::boot();
@@ -25,18 +42,8 @@ class Rack_power extends Model
         });
     }
 
-    public function rack()
-    {
-        return $this->belongsTo(Rack::class);
-    }
-
     public function status()
     {
         return $this->belongsTo(Status::class);
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class,'created_by_id');
     }
 }

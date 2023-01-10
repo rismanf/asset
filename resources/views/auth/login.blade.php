@@ -3,7 +3,7 @@
 @section('content')
     <div class="login-box">
         <div class="login-logo">
-            <b>Customer</b>Portal
+            <b>App </b>Portal
         </div>
         <!-- /.login-logo -->
         <div class="card">

@@ -13,12 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('log_racks', function (Blueprint $table) {
+        Schema::create('log_moveins', function (Blueprint $table) {
             $table->id();
             $table->string('user_id', 20)->nullable();
             $table->string('ip', 20);
-            $table->integer('rack_id');
-            $table->string('event', 20)->nullable();
+            $table->string('event', 100)->nullable();
             $table->text('description')->nullable();
             $table->date('isdate')->nullable();
             $table->time('istime')->nullable();
@@ -33,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('log_racks');
+        Schema::dropIfExists('log_moveins');
     }
 };

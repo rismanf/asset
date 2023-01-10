@@ -35,12 +35,11 @@ class SiteController extends Controller
     {
         if (Auth::check()) {
             if ($request->ajax()) {
-                $data = Site::latest()->get();
+                $data = Site::orderby('id','desc');
                 return DataTables::of($data)
-                    ->addIndexColumn()
                     ->addColumn('action', function ($row) {
                         $btn = '<a href="' . route('site.edit', $row->id) . '" class="edit btn btn-primary">Edit</a> ';
-                        $btn .= '<a href="' . route('site.delete', $row->id) . '"  class="delete btn btn-danger">Delete</a>';
+                        $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-tilte="delete" class="delete btn btn-danger deletebtn">Delete</a>';
                         return $btn;
                     })
                     ->rawColumns(['action'])
@@ -153,8 +152,12 @@ class SiteController extends Controller
      */
     public function destroy($id)
     {
-        DB::table("sites")->where('id', $id)->delete();
-        return redirect()->route('site.index')
-            ->with('success', 'Site deleted successfully');
+        try {
+            Site::find($id)->delete();
+            return response()->json(['success' => 'Site deleted successfully']);
+        } catch (\Exception $e) {
+            Log_error::record(Auth::user(), 'Site', 'Delete Site', $e);
+            return false;
+        }
     }
 }

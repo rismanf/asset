@@ -37,7 +37,7 @@ class Rack extends Model
 
     public function floor()
     {
-        return $this->belongsTo(Floor::class);
+        return $this->belongsTo(Floor::class)->select(['id', 'floor_name','site_id']);
     }
 
     // public function room()
@@ -49,4 +49,16 @@ class Rack extends Model
     {
         return $this->belongsTo(Status::class);
     }
+
+    public function rackpowerdefault()
+    {
+        return $this->belongsTo(Rack_power_default::class, 'rack_power_defaults_id')->select(['id', 'power_default']);
+    }
+
+    public function pic_name()
+    {
+        return $this->belongsTo(User::class, 'pic_id')->select(['id', 'name']);
+    }
+
+    
 }

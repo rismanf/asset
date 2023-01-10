@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('floor', 'active')
+@section('checkpower', 'active')
 
 @section('style')
     <!-- SweetAlert2 -->
@@ -16,12 +16,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>{{ __('Floor Management') }}</h1>
+                        <h1>{{ __('Check Power Management') }}</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">{{ __('Floor Management') }}</li>
+                            <li class="breadcrumb-item active">{{ __('Check Power Management') }}</li>
                         </ol>
                     </div>
                 </div>
@@ -34,7 +34,7 @@
             <!-- Default box -->
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">{{ __('Site List') }}</h3>
+                    <h3 class="card-title">{{ __('Check Power List') }}</h3>
 
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
@@ -46,48 +46,21 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    @can('floor-create')
-                        <p><a class="btn btn-success" href="{{ route('floor.create') }}"> Create New Floor</a></p>
-                    @endcan
-                    <div class="input-group mb-3">
-                        <input type="text" class="form-control">
-                        <div class="input-group-append">
-                            <span class="input-group-text"><i class="fas fa-search"></i></span>
-                        </div>
-                    </div>
-                    <div class="input-group input-group-sm" style="width: 150px;">
-                        <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
-
-                        <div class="input-group-append">
-                            <button type="submit" class="btn btn-default"><i class="fas fa-search"></i></button>
-                        </div>
-                    </div>
                     <table class="table yajra-dt">
                         <thead>
                             <tr>
-                                <th>No</th>
-                                <th>Floor Name</th>
-                                <th>Site</th>
+                                <th>Name</th>
+                                <th>Customer</th>
+                                <th>Location</th>
+                                <th>VA Before</th>
+                                <th>VA</th>
+                                <th>Status</th>
                                 <th width="280px">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($floor as $item)
-                                <tr>
-                                    <td>{{ ($floor->currentPage() - 1) * $floor->perPage() + $loop->index + 1 }}</td>
-                                    <td>{{ $item->floor_name }}</td>
-                                    <td>{{ $item->site->site_name }}</td>
-                                    <td width="280px">Action</td>
-                                </tr>
-                            @endforeach
                         </tbody>
                     </table>
-                    <nav aria-label="Page navigation example"><br />
-                        <ul class="pagination pagination-sm m-0 float-right">
-                            Total:{{ $floor->total() }}
-                        </ul>
-                    </nav>
-                    {{ $floor->links() }}
                 </div>
                 <!-- /.card-body -->
                 <div class="card-footer">
@@ -104,8 +77,52 @@
 @endsection
 
 @section('javascript')
-    {{-- <script src="{{ asset('plugins/datatables/jquery.dataTables.js') }}"></script> --}}
-    {{-- <script src="{{ asset('plugins/datatables-bs4/js/dataTables.bootstrap4.js') }}"></script> --}}
+    <script src="{{ asset('plugins/datatables/jquery.dataTables.js') }}"></script>
+    <script src="{{ asset('plugins/datatables-bs4/js/dataTables.bootstrap4.js') }}"></script>
+
+    <script type="text/javascript">
+        $(function() {
+            var table = $('.yajra-dt').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: "{{ route('checkpower.index') }}",
+                columns: [
+                    {
+                        data: 'rackname',
+                        name: 'rackname'
+                    },
+                    {
+                        data: 'customer',
+                        name: 'customer'
+                    },
+                    {
+                        data: 'site',
+                        name: 'site'
+                    },
+                    {
+                        data: 'rack_before',
+                        name: 'rack_before'
+                    },
+                    {
+                        data: 'rack_va',
+                        name: 'rack_va'
+                    },
+                    {
+                        data: 'status',
+                        name: 'status'
+                    },
+                    {
+                        data: 'action',
+                        name: 'action',
+                        orderable: true,
+                        searchable: true
+                    },
+                ]
+            });
+
+        });
+    </script>
+
     <!--start alert-->
     <script src="{{ asset('plugins/sweetalert2/sweetalert2.min.js') }}" defer></script>
     <script>

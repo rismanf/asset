@@ -33,7 +33,6 @@ class RoleController extends Controller
      */
     public function index(Request $request)
     {
-        if (Auth::check()) {
             if ($request->ajax()) {
                 $data = Role::latest()->get();
                 return DataTables::of($data)
@@ -48,8 +47,6 @@ class RoleController extends Controller
             }
 
             return view('roles.index');
-        }
-        return redirect()->route('logout');
 
         // $roles = Role::orderBy('id','ASC')->paginate(5);
         // return view('roles.index',compact('roles'))

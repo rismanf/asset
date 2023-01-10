@@ -3,8 +3,10 @@
 
 <head>
     <meta charset="utf-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>NeutraDC</title>
+    <link href="{{ asset('favicon.png') }}" rel="shortcut icon">
     <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Font Awesome -->
@@ -31,7 +33,7 @@
 
         <footer class="main-footer">
             <div class="float-right d-none d-sm-block">
-                <b>Version</b> 3.0.2
+                <b>Version</b> 1.0.1
             </div>
             <strong>Copyright &copy; 2022 <a href="http://neutradc.id">NeutraDC.id</a>.</strong> All rights
             reserved.

@@ -52,7 +52,6 @@
                     <table class="table yajra-dt">
                         <thead>
                             <tr>
-                                <th>No</th>
                                 <th>Name</th>
                                 <th width="280px">Action</th>
                             </tr>
@@ -80,15 +79,17 @@
     <script src="{{ asset('plugins/datatables-bs4/js/dataTables.bootstrap4.js') }}"></script>
 
     <script type="text/javascript">
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
         $(function() {
             var table = $('.yajra-dt').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('site.index') }}",
-                columns: [{
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex'
-                    },
+                columns: [
                     {
                         data: 'site_name',
                         name: 'site_name'
@@ -101,25 +102,41 @@
                     },
                 ]
             });
+            $('body').on('click', '.deletebtn', function() {
+                var site_id = $(this).data("id");
+                if (confirm("Are you sure want to delete!")) {
+                    $.ajax({
+                        type: "DELETE",
+                        url: "{{ route('site.store') }}" + '/' + site_id,
+                        success: function(data) {
+                            alertsuccess('success','Site deleted successfully')
+                            table.draw();
+                        },
+                        error: function(data) {
+                            console.log('Error', data);
+                        }
+                    })
+                }
 
+            });
         });
     </script>
 
     <!--start alert-->
     <script src="{{ asset('plugins/sweetalert2/sweetalert2.min.js') }}" defer></script>
     <script>
-        // function alertsuccess(type, msg) {
-        //     const Toast = Swal.mixin({
-        //         toast: true,
-        //         position: 'top-end',
-        //         showConfirmButton: false,
-        //         timer: 3000
-        //     });
-        //     Toast.fire({
-        //         type: type,
-        //         title: msg
-        //     })
-        // };
+        function alertsuccess(type, msg) {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000
+            });
+            Toast.fire({
+                type: type,
+                title: msg
+            })
+        };
     </script>
     @if (session('success'))
         <script>

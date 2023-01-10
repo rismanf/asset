@@ -13,24 +13,22 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('racks', function (Blueprint $table) {
+        Schema::create('moveins', function (Blueprint $table) {
             $table->id();
+            $table->string('code_movein', 100)->unique();
+            $table->string('ticket_number',100)->nullable();
             $table->integer('customer_id');
-            $table->integer('site_id');
-            $table->integer('floor_id');
-            $table->integer('room_id')->nullable();
+            $table->string('pic_name',100);
+            $table->string('pic_phone',20);
+            $table->date('installation_date');
+            $table->integer('site_id')->nullable();
+            $table->integer('floor_id')->nullable();
             $table->integer('flagging')->default(1);
             $table->integer('status_id')->default(1);
-            $table->string('rack_name',100);
-            $table->string('rack_description',200)->nullable();
-            $table->integer('rack_power_defaults_id')->default(1);
-            $table->decimal('rack_va', 10, 2)->nullable();
-            $table->integer('pic_id')->nullable();
-            $table->timestamp('approve_date')->nullable();
-            $table->decimal('rack_va_tmp', 10, 2)->nullable();
-            $table->integer('pic_id_tmp')->nullable();
             $table->integer('created_by_id');
             $table->integer('updated_by_id')->nullable();
+            $table->timestamp('process_date')->nullable();
+            $table->timestamp('approve_date')->nullable();
             $table->timestamps();
         });
     }
@@ -42,6 +40,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('racks');
+        Schema::dropIfExists('moveins');
     }
 };

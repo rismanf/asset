@@ -6,11 +6,25 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
-class Rack_power extends Model
+class Movein_detail extends Model
 {
     use HasFactory;
 
-    protected $guarded  = ['id'];
+    protected $primaryKey = 'id';
+
+    protected $fillable = [
+        'movein_id',
+        'item_name',
+        'item_description',
+        'item_va',
+        'rack_id',
+        'rack_va_before',
+        'rack_va_affter',
+        'flagging',
+        'status_id',
+        'created_by_id',
+        'updated_by_id',
+    ];
 
     protected static function boot() {
         parent::boot();
@@ -23,20 +37,5 @@ class Rack_power extends Model
         static::updating(function ($model) {
             $model->updated_by_id = is_object(Auth::guard(config('app.guards.web'))->user()) ? Auth::guard(config('app.guards.web'))->user()->id : 1;
         });
-    }
-
-    public function rack()
-    {
-        return $this->belongsTo(Rack::class);
-    }
-
-    public function status()
-    {
-        return $this->belongsTo(Status::class);
-    }
-
-    public function user()
-    {
-        return $this->belongsTo(User::class,'created_by_id');
     }
 }

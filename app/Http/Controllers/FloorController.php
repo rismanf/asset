@@ -33,37 +33,26 @@ class FloorController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    // public function index(Request $request)
-    // {
-    //     if (Auth::check()) {
-    //         if ($request->ajax()) {        
-    //             $model = Floor::with('site');
-    //             return DataTables::of($model)
-    //                 ->addColumn('action', function ($row) {
-    //                     $btn = '<a href="' . route('floor.edit', $row->id) . '" class="edit btn btn-primary">Edit</a> ';
-    //                     $btn .= '<a href="' . route('floor.delete', $row->id) . '"  class="delete btn btn-danger">Delete</a>';
-    //                     return $btn;
-    //                 })
-    //                 ->addColumn('site', function ($row) {
-    //                     $btn = $row->site->site_name;
-    //                     return $btn;
-    //                 })
-    //                 ->rawColumns(['action', 'site'])
-    //                 ->make(true);
-    //         }
-
-    //         return view('floors.index');
-    //     }
-    //     return redirect()->route('logout');
-    // }
     public function index(Request $request)
     {
-        if (Auth::check()) {
-           
-            $floor = Floor::with('site')->paginate(10);
-            return view('floors.index2',compact('floor'));
+
+        if ($request->ajax()) {
+            $model = Floor::with('site')->orderby('id','desc');
+            return DataTables::of($model)
+                ->addColumn('action', function ($row) {
+                    $btn = '<a href="' . route('floor.edit', $row->id) . '" class="edit btn btn-primary">Edit</a> ';
+                    $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-tilte="delete" class="delete btn btn-danger deletebtn">Delete</a>';
+                    return $btn;
+                })
+                ->addColumn('site', function ($row) {
+                    $btn = $row->site->site_name;
+                    return $btn;
+                })
+                ->rawColumns(['action', 'site'])
+                ->make(true);
         }
-        return redirect()->route('logout');
+
+        return view('floors.index');
     }
     /**
      * Show the form for creating a new resource.
@@ -167,8 +156,12 @@ class FloorController extends Controller
      */
     public function destroy($id)
     {
-        DB::table("Floors")->where('id', $id)->delete();
-        return redirect()->route('floor.index')
-            ->with('success', 'Floor deleted successfully');
+        try {
+            Floor::find($id)->delete();
+            return response()->json(['success' => 'Floor deleted successfully']);
+        } catch (\Exception $e) {
+            Log_error::record(Auth::user(), 'Floor', 'Delete Floor', $e);
+            return false;
+        }
     }
 }

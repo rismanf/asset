@@ -56,7 +56,7 @@
                                         data-placeholder="Customer" style="width: 100%;">
                                         <option value="">-- Choose --</option>
                                         @foreach ($customer as $id => $item)
-                                            <option value="{{ $id }}">{{ $item }}</option>
+                                            <option value="{{ $id }}" {{ old('customer_id') == $id ? "selected" :""}}>{{ $item }}</option>
                                         @endforeach
                                     </select>
                                     @if ($errors->has('customer_id'))
@@ -99,14 +99,14 @@
                             <div class="col-xs-12 col-sm-12 col-md-12">
                                 <div class="form-group">
                                     <strong>Rack VA Default:</strong>
-                                    <select class="select2"  name="rack_default" data-placeholder="Rack VA Default"
+                                    <select class="select2"  name="rack_power_defaults_id" data-placeholder="Rack VA Default"
                                         style="width: 100%;">
                                         @foreach ($power_default as $id => $name)
-                                            <option value="{{ $id }}">{{ $name }} VA</option>
+                                            <option value="{{ $id }}" {{ old('rack_power_defaults_id') == $id ? "selected" :""}} >{{ $name }} VA</option>
                                         @endforeach
                                     </select>
-                                    @if ($errors->has('rack_default'))
-                                        <span class="text-danger">{{ $errors->first('rack_default') }}</span>
+                                    @if ($errors->has('rack_power_defaults_id'))
+                                        <span class="text-danger">{{ $errors->first('rack_power_defaults_id') }}</span>
                                     @endif
                                 </div>
                             </div>

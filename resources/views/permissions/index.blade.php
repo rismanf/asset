@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('floor', 'active')
+@section('permissions', 'active')
 
 @section('style')
     <!-- SweetAlert2 -->
@@ -16,12 +16,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>{{ __('Floor Management') }}</h1>
+                        <h1>{{ __('Permissions Management') }}</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">{{ __('Floor Management') }}</li>
+                            <li class="breadcrumb-item active">{{ __('Permissions Management') }}</li>
                         </ol>
                     </div>
                 </div>
@@ -34,7 +34,7 @@
             <!-- Default box -->
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">{{ __('Site List') }}</h3>
+                    <h3 class="card-title">{{ __('Permissions List') }}</h3>
 
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
@@ -46,14 +46,13 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    @can('floor-create')
-                        <p><a class="btn btn-success" href="{{ route('floor.create') }}"> Create New Floor</a></p>
+                    @can('permission-create')
+                        <p><a class="btn btn-success" href="{{ route('permissions.create') }}"> Create New Permission</a></p>
                     @endcan
                     <table class="table yajra-dt">
                         <thead>
                             <tr>
-                                <th>Floor Name</th>
-                                <th>Site</th>
+                                <th>Permission</th>
                                 <th width="280px">Action</th>
                             </tr>
                         </thead>
@@ -75,10 +74,10 @@
     <!-- /.content-wrapper -->
 @endsection
 
+
 @section('javascript')
     <script src="{{ asset('plugins/datatables/jquery.dataTables.js') }}"></script>
     <script src="{{ asset('plugins/datatables-bs4/js/dataTables.bootstrap4.js') }}"></script>
-
     <script type="text/javascript">
     $.ajaxSetup({
             headers: {
@@ -89,15 +88,11 @@
             var table = $('.yajra-dt').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('floor.index') }}",
+                ajax: "{{ route('permissions.index') }}",
                 columns: [
                     {
-                        data: 'floor_name',
-                        name: 'floor_name'
-                    },
-                    {
-                        data: 'site',
-                        name: 'site'
+                        data: 'name',
+                        name: 'name'
                     },
                     {
                         data: 'action',
@@ -107,14 +102,15 @@
                     },
                 ]
             });
+
             $('body').on('click', '.deletebtn', function() {
-                var floor_id = $(this).data("id");
+                var id = $(this).data("id");
                 if (confirm("Are you sure want to delete!")) {
                     $.ajax({
                         type: "DELETE",
-                        url: "{{ route('floor.store') }}" + '/' + floor_id,
+                        url: "{{ route('permissions.store') }}" + '/' + id,
                         success: function(data) {
-                            alertsuccess('success','Floor deleted successfully')
+                            alertsuccess('success','Permissions deleted successfully')
                             table.draw();
                         },
                         error: function(data) {
@@ -124,9 +120,9 @@
                 }
 
             });
+
         });
     </script>
-
     <!--start alert-->
     <script src="{{ asset('plugins/sweetalert2/sweetalert2.min.js') }}" defer></script>
     <script>

@@ -49,7 +49,6 @@
                 <table class="table yajra-dt">
                     <thead>
                         <tr>
-                            <th>ID</th>
                             <th>Name</th>
                             <th>Short Name</th>
                             <th>Site</th>
@@ -83,10 +82,7 @@
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('customer.index') }}",
-                columns: [{
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex'
-                    },
+                columns: [
                     {
                         data: 'customer_name',
                         name: 'customer_name'

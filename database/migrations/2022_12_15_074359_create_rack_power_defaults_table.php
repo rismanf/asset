@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('rack_power_defaults', function (Blueprint $table) {
             $table->id();
-            $table->string('power_default', 100);
+            $table->decimal('power_default', 10, 2);
             $table->timestamps();
         });
     }

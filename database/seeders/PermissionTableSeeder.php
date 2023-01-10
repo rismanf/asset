@@ -24,6 +24,10 @@ class PermissionTableSeeder extends Seeder
             'role-create',
             'role-edit',
             'role-delete',
+            'permission-list',
+            'permission-create',
+            'permission-edit',
+            'permission-delete',
             'news-list',
             'news-create',
             'news-edit',
@@ -52,6 +56,10 @@ class PermissionTableSeeder extends Seeder
             'request-create',
             'request-edit',
             'request-delete',
+            'movein-list',
+            'movein-create',
+            'movein-edit',
+            'movein-delete',
         ];
 
 

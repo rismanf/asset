@@ -8,7 +8,9 @@ use App\Http\Controllers\Controller;
 use App\Models\Customer;
 use App\Models\Floor;
 use App\Models\Log_error;
+use App\Models\Log_rack;
 use App\Models\Rack;
+use App\Models\Rack_power;
 use App\Models\Rack_power_default;
 use App\Models\Site;
 use DB;
@@ -38,39 +40,49 @@ class RackController extends Controller
      */
     public function index(Request $request)
     {
-        if (Auth::check()) {
-            if ($request->ajax()) {
-                $data = Rack::latest()->get();
-                return DataTables::of($data)
-                    ->addIndexColumn()
-                    ->addColumn('customer', function ($row) {
-                        $btn = $row->customer->customer_name;
-                        return $btn;
-                    })
-                    ->addColumn('site', function ($row) {
-                        $btn = $row->site->site_name;
-                        return $btn;
-                    })
-                    ->addColumn('floor', function ($row) {
-                        $btn = $row->floor->floor_name;
-                        return $btn;
-                    })
-                    ->addColumn('status', function ($row) {
-                        $btn = $row->status->status_name;
-                        return $btn;
-                    })
-                    ->addColumn('action', function ($row) {
-                        $btn = '<a href="' . route('rack.edit', $row->id) . '" class="edit btn btn-primary">Edit</a> ';
-                        $btn .= '<a href="' . route('rack.delete', $row->id) . '"  class="delete btn btn-danger">Delete</a>';
-                        return $btn;
-                    })
-                    ->rawColumns(['customer', 'site', 'floor', 'status', 'action'])
-                    ->make(true);
-            }
-
-            return view('rack.index');
+        if ($request->ajax()) {
+            $data = Rack::with('customer', 'site', 'floor', 'rackpowerdefault', 'status')->orderby('id', 'desc');
+            return DataTables::of($data)
+                ->addColumn('customer', function ($row) {
+                    $btn = $row->customer->customer_name;
+                    return $btn;
+                })
+                ->addColumn('site', function ($row) {
+                    $site = $row->site->site_name;
+                    $floor = $row->floor->floor_name;
+                    return $site . '<br> -' . $floor;
+                })
+                ->addColumn('rackpowerdefault', function ($row) {
+                    $btn = $row->rackpowerdefault->power_default;
+                    return $btn . ' VA';
+                })
+                ->addColumn('rackavailable', function ($row) {
+                    $btn = $row->rackpowerdefault->power_default;
+                    $va = $row->rack_va;
+                    $av = $btn - $va;
+                    return number_format($av, 2) . ' VA';
+                })
+                ->addColumn('status', function ($row) {
+                    $btn = '';
+                    if ($row->flagging == 2) {
+                        $btn .= 'on process <br>';
+                    }
+                    $btn .= $row->status->status_name;
+                    return $btn;
+                })
+                ->addColumn('action', function ($row) {
+                    $btn = '<a href="' . route('rack.show', $row->id) . '" class="edit btn btn-primary">Detail</a> ';
+                    if ($row->flagging == 1) {
+                        $btn .= '<a href="' . route('rack.edit', $row->id) . '" class="edit btn btn-primary">Edit</a> ';
+                        $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-tilte="delete" class="delete btn btn-danger deletebtn">Delete</a>';
+                    }
+                    return $btn;
+                })
+                ->rawColumns(['customer', 'site', 'rackpowerdefault', 'rackavailable', 'status', 'action'])
+                ->make(true);
         }
-        return redirect()->route('logout');
+
+        return view('rack.index');
     }
 
     /**
@@ -80,7 +92,7 @@ class RackController extends Controller
      */
     public function create()
     {
-        $customer = Customer::pluck('customer_name', 'id')->all();
+        $customer = Customer::orderby('customer_name')->pluck('customer_name', 'id')->all();
         $power_default = Rack_power_default::pluck('power_default', 'id')->all();
         return view('rack.create', compact('customer', 'power_default'));
     }
@@ -99,7 +111,7 @@ class RackController extends Controller
             'customer_id' => 'required',
             'rack_name' => ['required', 'max:100', Rule::unique('racks')
                 ->where('customer_id', $request->customer_id)],
-            'rack_default' => 'required',
+            'rack_power_defaults_id' => 'required',
             'rack_description' => 'max:200',
         ];
 
@@ -113,8 +125,14 @@ class RackController extends Controller
 
         $input = $request->all();
         try {
-            Rack::create($input);
-
+            $input['status_id'] = 8;
+            $rack = Rack::create($input);
+            $rackId = $rack->id;
+            Rack_power::create([
+                'rack_id' => $rackId,
+                'status_id' => 8,
+            ]);
+            Log_rack::record($rackId, 'Crated New Rack', 'Rack created successfully');
             return redirect()->route('rack.index')
                 ->with('success', 'Rack created successfully');
         } catch (\Exception $e) {
@@ -130,12 +148,10 @@ class RackController extends Controller
      */
     public function show($id)
     {
-        $role = Role::find($id);
-        $rolePermissions = Permission::join("role_has_permissions", "role_has_permissions.permission_id", "=", "permissions.id")
-            ->where("role_has_permissions.role_id", $id)
-            ->get();
+        $rack = Rack::find($id);
+        $log_rack = Log_rack::where('rack_id', $id)->get();
 
-        return view('roles.show', compact('role', 'rolePermissions'));
+        return view('rack.show', compact('rack', 'log_rack'));
     }
 
     /**
@@ -168,7 +184,7 @@ class RackController extends Controller
      */
     public function update(Request $request, $id)
     {
-     
+
         $rules = [
             'site_id' => 'required',
             'floor_id' => 'required',
@@ -191,14 +207,16 @@ class RackController extends Controller
         $input = $request->all();
 
         try {
-            $site = Site::find($id);
+            $site = Rack::find($id);
             $site->update($input);
 
-            return redirect()->route('site.index')
+            Log_rack::record($id, 'Updated Rack', 'Rack updated successfully');
+
+            return redirect()->route('rack.index')
                 ->with('success', 'Site updated successfully');
         } catch (\Exception $e) {
-            Log_error::record(Auth::user(), 'Site', 'Update Site', $e);
-            return redirect()->route('site.index')->with('error', 'ERROR');
+            Log_error::record(Auth::user(), 'Rack', 'Update rack', $e);
+            return redirect()->route('rack.index')->with('error', 'ERROR');
         }
     }
 
@@ -210,8 +228,10 @@ class RackController extends Controller
      */
     public function destroy($id)
     {
-        DB::table("sites")->where('id', $id)->delete();
-        return redirect()->route('site.index')
+        // $count=Rack_power::where('rack_id','=',$id)->where('status_id','=',8)->get()->count();
+        // dd($count);
+        // DB::table("sites")->where('id', $id)->delete();
+        return redirect()->route('rack.index')
             ->with('success', 'Site deleted successfully');
     }
 }

@@ -81,7 +81,7 @@
                                 <tr>
                                     <td><b>PIC</b></td>
                                     <td>:</td>
-                                    <td>{{ $rack->pic_name->name ?? '-' }}</td>
+                                    <td>{{ $rack->pic_name ?? '-' }}</td>
                                 </tr>
                             </table>
                         </div>

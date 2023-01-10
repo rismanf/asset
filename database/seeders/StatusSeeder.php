@@ -16,17 +16,19 @@ class StatusSeeder extends Seeder
     public function run()
     {
         $status = [
-            'Waiting Approval',
-            'AM Coordination',
-            'Approved',
-            'On Progress',
-            'Completed',
-            'Rejected',
-            'Closed',
+            ['Waiting Approval','warning'],
+            ['AM Coordination','warning'],
+            ['Approved','success'],
+            ['On Progress','warning'],
+            ['Completed','success'],
+            ['Rejected','danger'],
+            ['Closed','success'],
+            ['Check power','warning'],
+            ['Available','success'],
         ];
 
         foreach ($status as $status) {
-            Status::create(['status_name' => $status]);
+            Status::create(['status_name' => $status[0],'badge'=> $status[1]]);
         }
     }
 }

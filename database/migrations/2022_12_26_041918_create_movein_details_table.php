@@ -13,14 +13,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('rack_powers', function (Blueprint $table) {
+        Schema::create('movein_details', function (Blueprint $table) {
             $table->id();
+            $table->integer('movein_id');
+            $table->string('item_name',100);
+            $table->string('item_description',300)->nullable();
+            $table->decimal('item_va', 10, 2);
             $table->integer('rack_id');
+            $table->decimal('rack_va_before', 10, 2)->nullable();
+            $table->decimal('rack_va_affter', 10, 2)->nullable();
             $table->integer('flagging')->default(1);
             $table->integer('status_id')->default(1);
-            $table->decimal('rack_before', 10, 2)->default(0);
-            $table->decimal('rack_va', 10, 2)->default(0);
-            $table->boolean('active')->default(true);
             $table->integer('created_by_id');
             $table->integer('updated_by_id')->nullable();
             $table->timestamps();
@@ -34,6 +37,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('rack_powers');
+        Schema::dropIfExists('movein_details');
     }
 };

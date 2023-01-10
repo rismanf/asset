@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('floor', 'active')
+@section('movein', 'active')
 
 @section('style')
     <!-- SweetAlert2 -->
@@ -16,12 +16,12 @@
             <div class="container-fluid">
                 <div class="row mb-2">
                     <div class="col-sm-6">
-                        <h1>{{ __('Floor Management') }}</h1>
+                        <h1>{{ __('Move-in Management') }}</h1>
                     </div>
                     <div class="col-sm-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="#">Home</a></li>
-                            <li class="breadcrumb-item active">{{ __('Floor Management') }}</li>
+                            <li class="breadcrumb-item active">{{ __('Move-in Management') }}</li>
                         </ol>
                     </div>
                 </div>
@@ -34,7 +34,7 @@
             <!-- Default box -->
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">{{ __('Site List') }}</h3>
+                    <h3 class="card-title">{{ __('Move-in List') }}</h3>
 
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
@@ -46,14 +46,17 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    @can('floor-create')
-                        <p><a class="btn btn-success" href="{{ route('floor.create') }}"> Create New Floor</a></p>
+                    @can('movein-create')
+                        <p><a class="btn btn-success" href="{{ route('movein.create') }}"> Create request Move-in</a></p>
                     @endcan
                     <table class="table yajra-dt">
                         <thead>
                             <tr>
-                                <th>Floor Name</th>
-                                <th>Site</th>
+                                <th>Order Code</th>
+                                <th>No Ticket</th>
+                                <th>Location</th>
+                                <th>Customer</th>
+                                <th>Status</th>
                                 <th width="280px">Action</th>
                             </tr>
                         </thead>
@@ -80,24 +83,31 @@
     <script src="{{ asset('plugins/datatables-bs4/js/dataTables.bootstrap4.js') }}"></script>
 
     <script type="text/javascript">
-    $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
         $(function() {
             var table = $('.yajra-dt').DataTable({
                 processing: true,
                 serverSide: true,
-                ajax: "{{ route('floor.index') }}",
+                ajax: "{{ route('movein.index') }}",
                 columns: [
                     {
-                        data: 'floor_name',
-                        name: 'floor_name'
+                        data: 'code_movein',
+                        name: 'code_movein'
                     },
                     {
-                        data: 'site',
-                        name: 'site'
+                        data: 'code_movein',
+                        name: 'code_movein'
+                    },
+                    {
+                        data: 'code_movein',
+                        name: 'code_movein'
+                    },
+                    {
+                        data: 'code_movein',
+                        name: 'code_movein'
+                    },
+                    {
+                        data: 'status',
+                        name: 'status'
                     },
                     {
                         data: 'action',
@@ -107,41 +117,25 @@
                     },
                 ]
             });
-            $('body').on('click', '.deletebtn', function() {
-                var floor_id = $(this).data("id");
-                if (confirm("Are you sure want to delete!")) {
-                    $.ajax({
-                        type: "DELETE",
-                        url: "{{ route('floor.store') }}" + '/' + floor_id,
-                        success: function(data) {
-                            alertsuccess('success','Floor deleted successfully')
-                            table.draw();
-                        },
-                        error: function(data) {
-                            console.log('Error', data);
-                        }
-                    })
-                }
 
-            });
         });
     </script>
 
     <!--start alert-->
     <script src="{{ asset('plugins/sweetalert2/sweetalert2.min.js') }}" defer></script>
     <script>
-        function alertsuccess(type, msg) {
-            const Toast = Swal.mixin({
-                toast: true,
-                position: 'top-end',
-                showConfirmButton: false,
-                timer: 3000
-            });
-            Toast.fire({
-                type: type,
-                title: msg
-            })
-        };
+        // function alertsuccess(type, msg) {
+        //     const Toast = Swal.mixin({
+        //         toast: true,
+        //         position: 'top-end',
+        //         showConfirmButton: false,
+        //         timer: 3000
+        //     });
+        //     Toast.fire({
+        //         type: type,
+        //         title: msg
+        //     })
+        // };
     </script>
     @if (session('success'))
         <script>
