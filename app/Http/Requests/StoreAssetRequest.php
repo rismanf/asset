@@ -25,7 +25,7 @@ class StoreAssetRequest extends FormRequest
     public function rules()
     {
         return [
-            'asset_name' => Rule::unique('assets')->where('deleted_at',null),
+            'asset_name' => 'required',Rule::unique('assets')->where('deleted_at',null),
             'asset_code' => 'nullable|max:30|'.Rule::unique('assets')->where('deleted_at',null),
             'asset_class' => 'nullable|max:30',
             'asset_facility' => 'nullable|max:10',
@@ -33,10 +33,13 @@ class StoreAssetRequest extends FormRequest
             'serial_number' => 'nullable|max:50',
             'old_tag' => 'nullable|max:50',
             'description' => 'nullable|max:250',
-            'SAP_number' => 'nullable|max:100',
+            'sap_number' => 'nullable|max:100',
             'do_number' => 'nullable|max:100',
             'do_date' => 'nullable',
             'po_number' => 'nullable',
+            'site_id' => 'required',
+            'floor_id' => 'nullable',
+            'room_id' => 'nullable',
         ];
     }
 }

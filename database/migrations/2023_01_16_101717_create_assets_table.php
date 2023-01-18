@@ -24,7 +24,7 @@ return new class extends Migration
             $table->bigInteger('price')->nullable();
             $table->string('old_tag', 30)->nullable();
             $table->string('description', 250)->nullable();
-            $table->string('SAP_number', 100)->nullable();
+            $table->string('sap_number', 100)->nullable();
             $table->string('do_number', 100)->nullable();
             $table->date('do_date')->nullable();
             $table->string('po_number', 100)->nullable();
@@ -36,6 +36,8 @@ return new class extends Migration
             $table->date('buy_date')->nullable();
             $table->string('polis', 100)->nullable();
             $table->string('condition', 100)->nullable();
+            $table->string('capacity', 100)->nullable();
+            $table->string('u_space', 100)->nullable();
             $table->date('tahun_pembuatan', 100)->nullable();
             $table->date('tahun_instalasi', 100)->nullable();
             $table->date('tahun_operasi', 100)->nullable();
@@ -52,6 +54,15 @@ return new class extends Migration
             $table->unsignedBigInteger('bisnis_unit_id')->nullable();
             $table->foreign('bisnis_unit_id')
                 ->references('id')->on('bisnis_units')->onDelete('set null');
+            $table->unsignedBigInteger('site_id');
+            $table->foreign('site_id')
+                ->references('id')->on('sites');
+            $table->unsignedBigInteger('floor_id')->nullable();
+            $table->foreign('floor_id')
+                ->references('id')->on('floors')->onDelete('set null');
+            $table->unsignedBigInteger('room_id')->nullable();
+            $table->foreign('room_id')
+                ->references('id')->on('rooms')->onDelete('set null');
             $table->integer('asset_file_id')->nullable();
             $table->integer('created_by_id')->default(1);
             $table->integer('updated_by_id')->nullable();

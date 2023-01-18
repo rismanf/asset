@@ -25,30 +25,23 @@
                      </a>
                  </li>
                  <li class="nav-item">
-                  <a href="{{ route('asset.index') }}"  class="nav-link @yield('asset')">
-                      <i class="nav-icon fas fa-tachometer-alt"></i>
-                      <p>
-                          Asset
-                      </p>
-                  </a>
-                  <li class="nav-item">
-                    <a href="{{ route('assetupload.index') }}"  class="nav-link @yield('assetupload')">
-                        <i class="nav-icon fas fa-tachometer-alt"></i>
-                        <p>
-                            Asset Upload
-                        </p>
-                    </a>
-              </li>
-
-                 <li class="nav-item">
-                     <a href="{{ route('customer.index') }}" class="nav-link @yield('customer')">
+                     <a href="{{ route('asset.index') }}" class="nav-link @yield('asset')">
                          <i class="nav-icon fas fa-tachometer-alt"></i>
                          <p>
-                             Customers
+                             Asset
+                         </p>
+                     </a>
+                 <li class="nav-item">
+                     <a href="{{ route('assetupload.index') }}" class="nav-link @yield('assetupload')">
+                         <i class="nav-icon fas fa-tachometer-alt"></i>
+                         <p>
+                             Asset Upload
                          </p>
                      </a>
                  </li>
-                 <li class="nav-item">
+
+                 
+                 {{-- <li class="nav-item">
                      <a href="{{ route('request.index') }}" class="nav-link @yield('request')">
                          <i class="nav-icon fas fa-tachometer-alt"></i>
                          <p>
@@ -79,7 +72,7 @@
                              Move-in
                          </p>
                      </a>
-                 </li>
+                 </li> --}}
                  <li class="nav-item has-treeview @yield('utilititree')">
                      <a href="#" class="nav-link">
                          <i class="nav-icon fas fa-copy"></i>
@@ -135,6 +128,14 @@
                                  </p>
                              </a>
                          </li>
+                         <li class="nav-item">
+                          <a href="{{ route('customer.index') }}" class="nav-link @yield('customer')">
+                              <i class="nav-icon fas fa-tachometer-alt"></i>
+                              <p>
+                                  Customers
+                              </p>
+                          </a>
+                      </li>
                      </ul>
                  </li>
 
@@ -208,7 +209,7 @@
                          </li>
                      </ul>
                  </li>
-                 <li class="nav-item has-treeview @yield('webtreeview')">
+                 {{-- <li class="nav-item has-treeview @yield('webtreeview')">
                      <a href="#" class="nav-link">
                          <i class="nav-icon fas fa-copy"></i>
                          <p>
@@ -230,7 +231,7 @@
                              </a>
                          </li>
                      </ul>
-                 </li>
+                 </li> --}}
 
                  {{-- <li class="nav-item">
             <a href="../widgets.html" class="nav-link">

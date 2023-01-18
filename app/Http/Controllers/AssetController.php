@@ -8,7 +8,9 @@ use App\Http\Requests\StoreAssetRequest;
 use App\Models\Asset;
 use App\Models\AssetCategory;
 use App\Models\Brand;
+use App\Models\Floor;
 use App\Models\Log_error;
+use App\Models\Room;
 use App\Models\Site;
 use App\Models\Vendor;
 use Illuminate\Support\Facades\Auth;
@@ -38,8 +40,8 @@ class AssetController extends Controller
     {
         if ($request->ajax()) {
             $user = auth()->user();
-            $data = Asset::query();
-            if ($user->hasRole('superadmin','admin')) {
+            $data = Asset::with('site','floor');
+            if ($user->hasRole('superadmin', 'admin')) {
                 $data->withTrashed();
             }
             return DataTables($data)
@@ -48,6 +50,14 @@ class AssetController extends Controller
                         'display' => e($user->updated_at->format('Y F d')),
                         'timestamp' => $user->updated_at->timestamp
                     ];
+                })
+                ->addColumn('site', function ($row) {
+
+                    $btn = '<small class="badge badge-success">' . $row->site->site_name . '</small ><br>';
+                    $btn .= ($row->floor_id) ?'<small class="badge badge-success">' . $row->floor->floor_name . '</small ><br>':'';
+                    $btn .= ($row->room_id) ?'<small class="badge badge-success">' . $row->room->room_name . '</small ><br>':'';
+
+                    return $btn;
                 })
                 ->addColumn('action', function ($row) use ($user) {
                     $btn = '';
@@ -70,7 +80,7 @@ class AssetController extends Controller
                     }
                     return $btn;
                 })
-                ->rawColumns(['action', 'group'])
+                ->rawColumns(['action', 'site'])
                 ->make(true);
         }
 
@@ -88,7 +98,7 @@ class AssetController extends Controller
         $category = AssetCategory::pluck('category_name', 'id')->all();
         $vendor = Vendor::pluck('vendor_name', 'id')->all();
         $site = Site::pluck('site_name', 'id')->all();
-        return view('asset.create', compact('brand', 'category', 'vendor','site'));
+        return view('asset.create', compact('brand', 'category', 'vendor', 'site'));
     }
 
     /**
@@ -132,9 +142,14 @@ class AssetController extends Controller
      */
     public function edit($id)
     {
-        $brand = Brand::find($id);
-
-        return view('brand.edit', compact('brand'));
+        $asset = Asset::find($id);
+        $brand = Brand::pluck('brand_name', 'id')->all();
+        $category = AssetCategory::pluck('category_name', 'id')->all();
+        $vendor = Vendor::pluck('vendor_name', 'id')->all();
+        $site = Site::pluck('site_name', 'id')->all();
+        $floor = Floor::where('site_id','=',$asset->site_id)->pluck('floor_name', 'id')->all();
+        $room = Room::where('floor_id','=',$asset->floor_id)->pluck('room_name', 'id')->all();
+        return view('asset.edit', compact('asset','brand', 'category', 'vendor', 'site','floor','room'));
     }
 
     /**
@@ -147,19 +162,11 @@ class AssetController extends Controller
     public function update(StoreAssetRequest $request, $id)
     {
 
-        $this->validate($request, [
-            'brand_name' => 'required|max:80|unique:brands,brand_name,' . $id,
-            'brand_code' => 'nullable|max:10|unique:brands,brand_code,' . $id,
-            'description' => 'nullable|max:250'
-        ]);
-
-        $input = $request->all();
-
         try {
             $Asset = Asset::find($id);
             $Asset->updated_by_id = Auth::id();
             $Asset->save();
-            $Asset->update($input);
+            $Asset->update($request->validated());
 
             return redirect()->route('brand.index')
                 ->with('success', 'Asset updated successfully');
@@ -201,6 +208,4 @@ class AssetController extends Controller
         $Asset->forceDelete();
         return response()->json(['status' => 'success', 'msg' => 'Asset Permanently Delete successfully']);
     }
-
-   
 }

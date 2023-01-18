@@ -97,33 +97,47 @@ Route::group(['middleware' => ['auth']], function () {
 
 
     ///SUPERADMIN Role
-    Route::group(['middleware' => ['role:superadmin']], function () {
+    Route::group(['middleware' => ['role:superadmin|admin']], function () {
         Route::resource('site', SiteController::class);
         Route::resource('floor', FloorController::class);
         Route::resource('room', RoomController::class);
 
         //restore and forcedelete
-        Route::controller(CategoriesgroupController::class)->group(function () {
-            Route::post('categoriesgroup/restore', 'restore')->name('categoriesgroup.restore');
-            Route::post('categoriesgroup/forcedelete', 'forcedelete')->name('categoriesgroup.forcedelete');
+        Route::prefix('categoriesgroup')->controller(CategoriesgroupController::class)->group(function () {
+            Route::post('restore', 'restore')->name('categoriesgroup.restore');
+            Route::post('orcedelete', 'forcedelete')->name('categoriesgroup.forcedelete');
         });
 
-        Route::controller(CategoriesController::class)->group(function () {
-            Route::post('categories/restore', 'restore')->name('categories.restore');
-            Route::post('categories/forcedelete', 'forcedelete')->name('categories.forcedelete');
+        Route::prefix('categories')->controller(CategoriesController::class)->group(function () {
+            Route::post('restore', 'restore')->name('categories.restore');
+            Route::post('forcedelete', 'forcedelete')->name('categories.forcedelete');
         });
-        Route::controller(BrandController::class)->group(function () {
-            Route::post('brand/restore', 'restore')->name('brand.restore');
-            Route::post('brand/forcedelete', 'forcedelete')->name('brand.forcedelete');
+        Route::prefix('brand')->controller(BrandController::class)->group(function () {
+            Route::post('restore', 'restore')->name('brand.restore');
+            Route::post('forcedelete', 'forcedelete')->name('brand.forcedelete');
         });
-        Route::controller(VendorController::class)->group(function () {
-            Route::post('vendor/restore', 'restore')->name('vendor.restore');
-            Route::post('vendor/forcedelete', 'forcedelete')->name('vendor.forcedelete');
+        Route::prefix('vendor')->controller(VendorController::class)->group(function () {
+            Route::post('restore', 'restore')->name('vendor.restore');
+            Route::post('forcedelete', 'forcedelete')->name('vendor.forcedelete');
         });
-        Route::controller(BisnisUnitController::class)->group(function () {
-            Route::post('bisnisunit/restore', 'restore')->name('bisnisunit.restore');
-            Route::post('bisnisunit/forcedelete', 'forcedelete')->name('bisnisunit.forcedelete');
+        Route::prefix('bisnisunit')->controller(BisnisUnitController::class)->group(function () {
+            Route::post('restore', 'restore')->name('bisnisunit.restore');
+            Route::post('forcedelete', 'forcedelete')->name('bisnisunit.forcedelete');
         });
+
+        Route::prefix('site')->controller(SiteController::class)->group(function () {
+            Route::post('restore', 'restore')->name('site.restore');
+            Route::post('forcedelete', 'forcedelete')->name('site.forcedelete');
+        });
+        Route::prefix('floor')->controller(FloorController::class)->group(function () {
+            Route::post('restore', 'restore')->name('floor.restore');
+            Route::post('forcedelete', 'forcedelete')->name('floor.forcedelete');
+        });
+        Route::prefix('room')->controller(RoomController::class)->group(function () {
+            Route::post('restore', 'restore')->name('room.restore');
+            Route::post('forcedelete', 'forcedelete')->name('room.forcedelete');
+        });
+
 
         //master
         Route::resource('users', UserController::class);

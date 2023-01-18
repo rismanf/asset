@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('locationtree', 'active')
+@section('locationtree', 'menu-open')
 @section('site', 'active')
 
 @section('content')

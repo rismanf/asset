@@ -9,8 +9,6 @@ use App\Models\Floor;
 use App\Models\Log_error;
 use App\Models\Room;
 use App\Models\Site;
-use DB;
-use DataTables;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
@@ -38,14 +36,41 @@ class RoomController extends Controller
     {
 
         if ($request->ajax()) {
-            $data = Room::orderby('id', 'desc');
+            $user = auth()->user();
+            $data = Room::with('floor');
+            if ($user->hasRole(['superadmin', 'admin'])) {
+                $data->withTrashed();
+            }
             return DataTables($data)
-                ->addColumn('action', function ($row) {
-                    $btn = '<a href="' . route('room.edit', $row->id) . '" class="edit btn btn-primary">Edit</a> ';
-                    $btn .= '<a href="' . route('room.delete', $row->id) . '"  class="delete btn btn-danger">Delete</a>';
+                ->addColumn('site', function ($row) {
+
+                    $btn = '<small class="badge badge-success">' . $row->floor->site->site_name . '</small ><br>';
+                    $btn .= '<small class="badge badge-success">' . $row->floor->floor_name . '</small ><br>';
+
                     return $btn;
                 })
-                ->rawColumns(['action'])
+                ->addColumn('action', function ($row) use ($user) {
+                    $btn = '';
+                    if ($user->hasRole(['superadmin', 'admin'])) {
+                        $btn = '';
+                        if (empty($row->deleted_at)) {
+                            $btn .= '<a href="' . route('room.edit', $row->id) . '" class="edit btn btn-primary">Edit</a> ';
+                            $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-tilte="delete" class="delete btn btn-danger deletebtn">Delete</a>';
+                        } else {
+                            $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-tilte="delete" class="btn btn-success restorebtn">Restore</a> ';
+                            $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-tilte="delete" class="btn btn-danger forcedeletebtn">Force Delete</a>';
+                        }
+                    } else {
+                        if ($user->can('room-edit')) {
+                            $btn .= '<a href="' . route('room.edit', $row->id) . '" class="edit btn btn-primary">Edit</a> ';
+                        }
+                        if ($user->can('room-delete')) {
+                            $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-tilte="delete" class="delete btn btn-danger deletebtn">Delete</a>';
+                        }
+                    }
+                    return $btn;
+                })
+                ->rawColumns(['action', 'site'])
                 ->make(true);
         }
 
@@ -71,20 +96,22 @@ class RoomController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'floor_name' => ['required', 'max:255', Rule::unique('floors')
-                ->where('site_id', $request->site_id)],
+            'site_id' => 'required',
+            'floor_id' => 'required',
+            'room_name' => ['required', 'max:255', Rule::unique('rooms')
+                ->where('floor_id', $request->floor_id)],
         ]);
 
         $input = $request->all();
 
         try {
-            Floor::create($input);
+            Room::create($input);
 
-            return redirect()->route('floor.index')
-                ->with('success', 'Floor created successfully');
+            return redirect()->route('room.index')
+                ->with('success', 'Room created successfully');
         } catch (\Exception $e) {
-            Log_error::record(Auth::user(), 'Floor', 'Crated New Floor', $e);
-            return redirect()->route('floor.index')->with('error', 'ERROR');
+            Log_error::record(Auth::user(), 'Room', 'Crated New Room', $e);
+            return redirect()->route('room.index')->with('error', 'ERROR');
         }
     }
     /**
@@ -111,10 +138,10 @@ class RoomController extends Controller
      */
     public function edit($id)
     {
-        $floor = Floor::find($id);
+        $room = room::find($id);
         $site = Site::pluck('site_name', 'id')->all();
-        $site_id = $floor->site_id;
-        return view('floors.edit', compact('floor', 'site', 'site_id'));
+        $floor = Floor::where('id','=',$room->floor_id)->pluck('floor_name', 'id')->all();
+        return view('room.edit', compact('room', 'site', 'floor'));
     }
 
     /**
@@ -127,22 +154,24 @@ class RoomController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'floor_name' => ['required', 'max:255', Rule::unique('floors')
+            'site_id' => 'required',
+            'floor_id' => 'required',
+            'room_name' => ['required', 'max:255', Rule::unique('rooms')
                 ->ignore($id)
-                ->where('site_id', $request->site_id)],
+                ->where('floor_id', $request->floor_id)],
         ]);
 
         $input = $request->all();
 
         try {
-            $floor = Floor::find($id);
-            $floor->update($input);
+            $room = Room::find($id);
+            $room->update($input);
 
-            return redirect()->route('floor.index')
-                ->with('success', 'Floor updated successfully');
+            return redirect()->route('room.index')
+                ->with('success', 'Room updated successfully');
         } catch (\Exception $e) {
-            Log_error::record(Auth::user(), 'Floor', 'Update Floor', $e);
-            return redirect()->route('floor.index')->with('error', 'ERROR');
+            Log_error::record(Auth::user(), 'Room', 'Update Room', $e);
+            return redirect()->route('room.index')->with('error', 'ERROR');
         }
     }
     /**
@@ -154,11 +183,27 @@ class RoomController extends Controller
     public function destroy($id)
     {
         try {
-            Floor::find($id)->delete();
-            return response()->json(['success' => 'Floor deleted successfully']);
+            $Room = Room::find($id);
+            $Room->deleted_by_id = Auth::id();
+            $Room->save();
+            $Room->delete();
+            return response()->json(['status' => 'success', 'msg' => 'Room deleted successfully']);
         } catch (\Exception $e) {
-            Log_error::record(Auth::user(), 'Floor', 'Delete Floor', $e);
-            return false;
+            return response()->json(['status' => 'error', 'msg' => 'Room Cannot deleted']);
         }
+    }
+
+    public function restore(Request $request)
+    {
+        $Room = Room::onlyTrashed()->findOrFail($request->id);
+        $Room->restore();
+        return response()->json(['status' => 'success', 'msg' => 'Room Restore successfully']);
+    }
+
+    public function forcedelete(Request $request)
+    {
+        $Room = Room::onlyTrashed()->findOrFail($request->id);
+        $Room->forceDelete();
+        return response()->json(['status' => 'success', 'msg' => 'Room Permanently Delete successfully']);
     }
 }

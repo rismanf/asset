@@ -11,8 +11,7 @@ class Asset extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $guarded = ['id'
-    ];
+    protected $guarded = ['id'];
 
     protected static function boot() {
         parent::boot();
@@ -41,5 +40,20 @@ class Asset extends Model
     public function bisnisunit()
     {
         return $this->belongsTo(BisnisUnit::class);
+    }
+
+    public function site()
+    {
+        return $this->belongsTo(Site::class);
+    }
+
+    public function floor()
+    {
+        return $this->belongsTo(Floor::class);
+    }
+    
+    public function room()
+    {
+        return $this->belongsTo(Room::class);
     }
 }

@@ -48,12 +48,12 @@ class AssetUploadContorller extends Controller
                 })
                 ->addColumn('action', function ($row) use ($user) {
                     $btn = '';
-                    
-                    if ($row->status==3) {
+
+                    if ($row->status == 3) {
                         $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-tilte="delete" class="delete btn btn-warning showerrorbtn">Show Error</a> ';
                         $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-tilte="delete" class="delete btn btn-danger deletebtn">Delete</a>';
                     }
-                    if ($row->status==2) {
+                    if ($row->status == 2) {
                         $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-tilte="delete" class="delete btn btn-primary showbtn">Show Data</a> ';
                     }
 
@@ -68,25 +68,34 @@ class AssetUploadContorller extends Controller
 
     public function show(Request $request)
     {
-        $data=Asset::where('asset_file_id','=',$request->id)->get();
+        $data = Asset::where('asset_file_id', '=', $request->id)->get();
 
         return view('assetupload.show', compact('data'));
     }
 
     public function showerror(Request $request)
     {
-        $AssetUpload=AssetUpload::select('result')->find($request->id);
-        $data = json_decode ($AssetUpload->result, true);
+        $AssetUpload = AssetUpload::select('result')->find($request->id);
+        $data = json_decode($AssetUpload->result, true);
         return view('assetupload.showerror', compact('data'));
     }
 
-    public function delete()
+    public function delete(Request $request)
     {
-        return true;
+        try {
+            $AssetUpload = AssetUpload::find($request->id);
+            $AssetUpload->delete();
+            return response()->json(['status' => 'success', 'msg' => 'AssetUpload deleted successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'msg' => 'AssetUpload Cannot deleted']);
+        }
     }
 
     public function import(Request $request)
     {
+        $this->validate($request, [
+            'file' => 'required|file|mimes:xlsx,xsl'
+        ]);
 
         $file = $request->file('file')->store('imports');
         $fileName = $request->file('file')->getClientOriginalName();
@@ -94,6 +103,7 @@ class AssetUploadContorller extends Controller
             'asset_file' => $file,
             'asset_original_file' => $fileName
         ]);
+
 
         UploadAssetRegister::dispatch($file);
 

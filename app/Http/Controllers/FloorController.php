@@ -37,15 +37,35 @@ class FloorController extends Controller
     {
 
         if ($request->ajax()) {
-            $model = Floor::with('site')->orderby('id','desc');
-            return DataTables::of($model)
-                ->addColumn('action', function ($row) {
-                    $btn = '<a href="' . route('floor.edit', $row->id) . '" class="edit btn btn-primary">Edit</a> ';
-                    $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-tilte="delete" class="delete btn btn-danger deletebtn">Delete</a>';
+            $user = auth()->user();
+            $data = Floor::with('site');
+            if ($user->hasRole(['superadmin', 'admin'])) {
+                $data->withTrashed();
+            }
+            return DataTables($data)
+                ->addColumn('site', function ($row) {
+                    $btn = '<small class="badge badge-success">' . $row->site->site_name . '</small ><br>';
                     return $btn;
                 })
-                ->addColumn('site', function ($row) {
-                    $btn = $row->site->site_name;
+                ->addColumn('action', function ($row) use ($user) {
+                    $btn = '';
+                    if ($user->hasRole(['superadmin', 'admin'])) {
+                        $btn = '';
+                        if (empty($row->deleted_at)) {
+                            $btn .= '<a href="' . route('floor.edit', $row->id) . '" class="edit btn btn-primary">Edit</a> ';
+                            $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-tilte="delete" class="delete btn btn-danger deletebtn">Delete</a>';
+                        } else {
+                            $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-tilte="delete" class="btn btn-success restorebtn">Restore</a> ';
+                            $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-tilte="delete" class="btn btn-danger forcedeletebtn">Force Delete</a>';
+                        }
+                    } else {
+                        if ($user->can('floor-edit')) {
+                            $btn .= '<a href="' . route('room.edit', $row->id) . '" class="edit btn btn-primary">Edit</a> ';
+                        }
+                        if ($user->can('floor-delete')) {
+                            $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-tilte="delete" class="delete btn btn-danger deletebtn">Delete</a>';
+                        }
+                    }
                     return $btn;
                 })
                 ->rawColumns(['action', 'site'])
@@ -157,11 +177,27 @@ class FloorController extends Controller
     public function destroy($id)
     {
         try {
-            Floor::find($id)->delete();
-            return response()->json(['success' => 'Floor deleted successfully']);
+            $Floor = Floor::find($id);
+            $Floor->deleted_by_id = Auth::id();
+            $Floor->save();
+            $Floor->delete();
+            return response()->json(['status' => 'success', 'msg' => 'Floor deleted successfully']);
         } catch (\Exception $e) {
-            Log_error::record(Auth::user(), 'Floor', 'Delete Floor', $e);
-            return false;
+            return response()->json(['status' => 'error', 'msg' => 'Floor Cannot deleted']);
         }
+    }
+
+    public function restore(Request $request)
+    {
+        $Floor = Floor::onlyTrashed()->findOrFail($request->id);
+        $Floor->restore();
+        return response()->json(['status' => 'success', 'msg' => 'Floor Restore successfully']);
+    }
+
+    public function forcedelete(Request $request)
+    {
+        $Floor = Floor::onlyTrashed()->findOrFail($request->id);
+        $Floor->forceDelete();
+        return response()->json(['status' => 'success', 'msg' => 'Floor Permanently Delete successfully']);
     }
 }

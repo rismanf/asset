@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Models\Floor;
 use App\Models\Log_error;
 use App\Models\Site;
 use DB;
@@ -35,11 +36,31 @@ class SiteController extends Controller
     {
         if (Auth::check()) {
             if ($request->ajax()) {
-                $data = Site::orderby('id','desc');
-                return DataTables::of($data)
-                    ->addColumn('action', function ($row) {
-                        $btn = '<a href="' . route('site.edit', $row->id) . '" class="edit btn btn-primary">Edit</a> ';
-                        $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-tilte="delete" class="delete btn btn-danger deletebtn">Delete</a>';
+                $user = auth()->user();
+                $data = Site::query();
+                if ($user->hasRole(['superadmin', 'admin'])) {
+                    $data->withTrashed();
+                }
+                return DataTables($data)
+                    ->addColumn('action', function ($row) use ($user) {
+                        $btn = '';
+                        if ($user->hasRole(['superadmin', 'admin'])) {
+                            $btn = '';
+                            if (empty($row->deleted_at)) {
+                                $btn .= '<a href="' . route('site.edit', $row->id) . '" class="edit btn btn-primary">Edit</a> ';
+                                $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-tilte="delete" class="delete btn btn-danger deletebtn">Delete</a>';
+                            } else {
+                                $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-tilte="delete" class="btn btn-success restorebtn">Restore</a> ';
+                                $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-tilte="delete" class="btn btn-danger forcedeletebtn">Force Delete</a>';
+                            }
+                        } else {
+                            if ($user->can('site-edit')) {
+                                $btn .= '<a href="' . route('site.edit', $row->id) . '" class="edit btn btn-primary">Edit</a> ';
+                            }
+                            if ($user->can('site-delete')) {
+                                $btn .= '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-tilte="delete" class="delete btn btn-danger deletebtn">Delete</a>';
+                            }
+                        }
                         return $btn;
                     })
                     ->rawColumns(['action'])
@@ -152,12 +173,31 @@ class SiteController extends Controller
      */
     public function destroy($id)
     {
-        try {
-            Site::find($id)->delete();
-            return response()->json(['success' => 'Site deleted successfully']);
-        } catch (\Exception $e) {
-            Log_error::record(Auth::user(), 'Site', 'Delete Site', $e);
-            return false;
+        if (Floor::where('site_id', '=', $id)->first()) {
+            return response()->json(['status' => 'error', 'msg' => 'Site Cannot deleted, Please Delete Floor frist']);
         }
+        try {
+            $Site = Site::find($id);
+            $Site->deleted_by_id = Auth::id();
+            $Site->save();
+            $Site->delete();
+            return response()->json(['status' => 'success', 'msg' => 'Site deleted successfully']);
+        } catch (\Exception $e) {
+            return response()->json(['status' => 'error', 'msg' => 'Site Cannot deleted, Please Delete Floor frist']);
+        }
+    }
+
+    public function restore(Request $request)
+    {
+        $Site = Site::onlyTrashed()->findOrFail($request->id);
+        $Site->restore();
+        return response()->json(['status' => 'success', 'msg' => 'Site restore successfully']);
+    }
+
+    public function forcedelete(Request $request)
+    {
+        $Site = Site::onlyTrashed()->findOrFail($request->id);
+        $Site->forceDelete();
+        return response()->json(['status' => 'success', 'msg' => 'Site Permanently Delete successfully']);
     }
 }

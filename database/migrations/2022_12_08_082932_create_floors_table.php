@@ -23,6 +23,7 @@ return new class extends Migration
             $table->integer('deleted_by_id')->nullable();
             $table->boolean('active')->default(true);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

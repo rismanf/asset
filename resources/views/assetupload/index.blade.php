@@ -164,7 +164,7 @@
             });
 
             $('body').on('click', '.deletebtn', function() {
-                var site_id = $(this).data("id");
+                var id = $(this).data("id");
                 if (confirm("Are you sure want to delete?")) {
                     $.ajax({
                         type: "POST",

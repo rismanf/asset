@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('locationtree', 'active')
+@section('locationtree', 'menu-open')
 @section('site', 'active')
 
 @section('style')
@@ -103,14 +103,15 @@
                     },
                 ]
             });
+           
             $('body').on('click', '.deletebtn', function() {
                 var site_id = $(this).data("id");
-                if (confirm("Are you sure want to delete!")) {
+                if (confirm("Are you sure want to delete?")) {
                     $.ajax({
                         type: "DELETE",
                         url: "{{ route('site.store') }}" + '/' + site_id,
                         success: function(data) {
-                            alertsuccess('success','Site deleted successfully')
+                            alertsuccess(data.status, data.msg)
                             table.draw();
                         },
                         error: function(data) {
@@ -119,6 +120,46 @@
                     })
                 }
 
+            });
+
+            $('body').on('click', '.restorebtn', function() {
+                var id = $(this).data("id");
+                if (confirm("Are you sure want to restore data?")) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ route('site.restore') }}",
+                        data: {
+                            "id": id,
+                        },
+                        success: function(data) {
+                            alertsuccess(data.status, data.msg)
+                            table.draw();
+                        },
+                        error: function(data) {
+                            console.log('Error', data);
+                        }
+                    })
+                }
+            });
+
+            $('body').on('click', '.forcedeletebtn', function() {
+                var id = $(this).data("id");
+                if (confirm("Are you sure want to permanently delete?")) {
+                    $.ajax({
+                        type: "POST",
+                        url: "{{ route('site.forcedelete') }}",
+                        data: {
+                            "id": id,
+                        },
+                        success: function(data) {
+                            alertsuccess(data.status, data.msg)
+                            table.draw();
+                        },
+                        error: function(data) {
+                            console.log('Error', data);
+                        }
+                    })
+                }
             });
         });
     </script>

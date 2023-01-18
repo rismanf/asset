@@ -36,7 +36,7 @@ class BrandController extends Controller
         if ($request->ajax()) {
             $user = auth()->user();
             $data = Brand::query();
-            if($user->hasRole('superadmin')){
+            if($user->hasRole('superadmin','admin')){
                 $data->withTrashed();
             }
             return DataTables($data)
@@ -48,7 +48,7 @@ class BrandController extends Controller
                  })
                 ->addColumn('action', function ($row) use ($user) {
                     $btn = '';
-                    if ($user->hasRole('superadmin')) {
+                    if($user->hasRole('superadmin','admin')){
                         $btn = '';
                         if (empty($row->deleted_at)) {
                             $btn .= '<a href="' . route('brand.edit', $row->id) . '" class="edit btn btn-primary">Edit</a> ';

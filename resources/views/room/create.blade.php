@@ -1,5 +1,5 @@
 @extends('layouts.admin')
-@section('locationtree', 'active')
+@section('locationtree', 'menu-open')
 @section('room', 'active')
 
 @section('style')
@@ -47,8 +47,8 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    @can('site-create')
-                        {!! Form::open(['route' => 'site.store', 'method' => 'POST']) !!}
+                    @can('room-create')
+                        {!! Form::open(['route' => 'room.store', 'method' => 'POST']) !!}
                         <div class="row">
                             <div class="col-xs-12 col-sm-6 col-md-6">
                                 <div class="form-group">

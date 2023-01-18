@@ -34,7 +34,7 @@
             <!-- Default box -->
             <div class="card">
                 <div class="card-header">
-                    <h3 class="card-title">{{ __('Brand List') }}</h3>
+                    <h3 class="card-title">{{ __('Asset List') }}</h3>
 
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip"
@@ -54,6 +54,7 @@
                             <tr>
                                 <th>Asset Name</th>
                                 <th>Code</th>
+                                <th>location</th>
                                 <th>Last Date</th>
                                 <th width="280px">Action</th>
                             </tr>
@@ -99,6 +100,10 @@
                     {
                         data: 'asset_code',
                         name: 'asset_code'
+                    },
+                    {
+                        data: 'site',
+                        name: 'site'
                     },
                     {
                         data: 'updated_at',
