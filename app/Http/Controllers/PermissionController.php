@@ -32,12 +32,17 @@ class PermissionController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
+            $user = auth()->user();
             $data = Permission::latest();
             return DataTables::of($data)
-                ->addColumn('action', function ($row) {
-                    // $btn = '<a href="' . route('permissions.edit', $row->id) . '" class="edit btn btn-primary">Edit</a> ';
-                    $btn = '<a href="javascript:void(0)" data-toggle="tooltip" data-id="' . $row->id . '" data-original-tilte="delete" class="delete btn btn-danger deletebtn">Delete</a>';
-                    return $btn;
+                ->addColumn('action', function ($row) use ($user) {
+                    $btn = '';
+                    // if ($user->can('permissions-edit')) {
+                    //     $btn .= '<a href="' . route('permissions.edit', $row->id) . '" class="edit btn btn-primary">Edit</a> ';
+                    // }
+                    if ($user->can('permissions-delete')) {
+                        $btn .= '<a href="' . route('permissions.delete', $row->id) . '"  class="delete btn btn-danger">Delete</a>';
+                    } return $btn;
                 })
                 ->rawColumns(['action'])
                 ->make(true);

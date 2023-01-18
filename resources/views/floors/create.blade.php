@@ -1,4 +1,5 @@
 @extends('layouts.admin')
+@section('locationtree', 'active')
 @section('floor', 'active')
 
 @section('style')

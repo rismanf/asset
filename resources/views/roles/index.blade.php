@@ -1,4 +1,5 @@
 @extends('layouts.admin')
+@section('settingtree', 'menu-open')
 @section('roles', 'active')
 
 @section('style')

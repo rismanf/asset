@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             ServiceSeeder::class,
             SiteSeeder::class,
             CustomerSeeder::class,
+            MasterSeeder::class,
         ]);
         // \App\Models\User::factory(10)->create();
 

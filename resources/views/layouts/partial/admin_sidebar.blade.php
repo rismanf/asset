@@ -1,135 +1,238 @@
  <!-- Main Sidebar Container -->
  <aside class="main-sidebar sidebar-dark-primary elevation-4">
-    <!-- Brand Logo -->
-    <a href="../../index3.html" class="brand-link">
-      <img src="{{ asset('img/logo.png') }}"
-           alt="neutradc Logo"
-           class="brand-image"  >
-      <span class="brand-text font-weight-light">Customer Portal</span>
-    </a>
+     <!-- Brand Logo -->
+     <a href="../../index3.html" class="brand-link">
+         <img src="{{ asset('img/logo.png') }}" alt="neutradc Logo" class="brand-image">
+         <span class="brand-text font-weight-light">AMS</span>
+     </a>
 
-    <!-- Sidebar -->
-    <div class="sidebar">
-    
+     <!-- Sidebar -->
+     <div class="sidebar">
 
-      <!-- Sidebar Menu -->
-      <nav class="mt-2">
-        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-          <!-- Add icons to the links using the .nav-icon class
+
+         <!-- Sidebar Menu -->
+         <nav class="mt-2">
+             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                 data-accordion="false">
+                 <!-- Add icons to the links using the .nav-icon class
                with font-awesome or any other icon font library -->
-          <li class="nav-item">
-            <a href="/" class="nav-link @yield('dashboard')">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>
-                Dashboard
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('users.index') }}" class="nav-link @yield('user')">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>
-                User
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('roles.index') }}" class="nav-link @yield('roles')">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>
-                Roles
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('permissions.index') }}" class="nav-link @yield('permissions')">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>
-                Permission
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('site.index') }}" class="nav-link @yield('site')">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>
-                Sites
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('floor.index') }}" class="nav-link @yield('floor')">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>
-                Floor
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('customer.index') }}" class="nav-link @yield('customer')">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>
-                Customers
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('request.index') }}" class="nav-link @yield('request')">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>
-                Request
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('rack.index') }}" class="nav-link @yield('rack')">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>
-                Rack
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('checkpower.index') }}" class="nav-link @yield('checkpower')">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>
-                Check Power
-              </p>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a href="{{ route('movein.index') }}" class="nav-link @yield('movein')">
-              <i class="nav-icon fas fa-tachometer-alt"></i>
-              <p>
-                Move-in
-              </p>
-            </a>
-          </li>
-          <li class="nav-item has-treeview @yield('webtreeview')">
-            <a href="#" class="nav-link">
-              <i class="nav-icon fas fa-copy"></i>
-              <p>
-                WEB Options
-                <i class="fas fa-angle-left right"></i>
-              </p>
-            </a>
-            <ul class="nav nav-treeview">
-              <li class="nav-item">
-                <a href="{{ route('webnews.index') }}" class="nav-link @yield('webnews')">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>News</p>
-                </a>
+                 <li class="nav-item">
+                     <a href="/" class="nav-link @yield('dashboard')">
+                         <i class="nav-icon fas fa-tachometer-alt"></i>
+                         <p>
+                             Dashboard
+                         </p>
+                     </a>
+                 </li>
+                 <li class="nav-item">
+                  <a href="{{ route('asset.index') }}"  class="nav-link @yield('asset')">
+                      <i class="nav-icon fas fa-tachometer-alt"></i>
+                      <p>
+                          Asset
+                      </p>
+                  </a>
+                  <li class="nav-item">
+                    <a href="{{ route('assetupload.index') }}"  class="nav-link @yield('assetupload')">
+                        <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <p>
+                            Asset Upload
+                        </p>
+                    </a>
               </li>
-              <li class="nav-item">
-                <a href="{{ route('websolution.index') }}" class="nav-link @yield('websolution')">
-                  <i class="far fa-circle nav-icon"></i>
-                  <p>Solution</p>
-                </a>
-              </li>
-            </ul>
-          </li>
 
-          {{-- <li class="nav-item">
+                 <li class="nav-item">
+                     <a href="{{ route('customer.index') }}" class="nav-link @yield('customer')">
+                         <i class="nav-icon fas fa-tachometer-alt"></i>
+                         <p>
+                             Customers
+                         </p>
+                     </a>
+                 </li>
+                 <li class="nav-item">
+                     <a href="{{ route('request.index') }}" class="nav-link @yield('request')">
+                         <i class="nav-icon fas fa-tachometer-alt"></i>
+                         <p>
+                             Request
+                         </p>
+                     </a>
+                 </li>
+                 <li class="nav-item">
+                     <a href="{{ route('rack.index') }}" class="nav-link @yield('rack')">
+                         <i class="nav-icon fas fa-tachometer-alt"></i>
+                         <p>
+                             Rack
+                         </p>
+                     </a>
+                 </li>
+                 <li class="nav-item">
+                     <a href="{{ route('checkpower.index') }}" class="nav-link @yield('checkpower')">
+                         <i class="nav-icon fas fa-tachometer-alt"></i>
+                         <p>
+                             Check Power
+                         </p>
+                     </a>
+                 </li>
+                 <li class="nav-item">
+                     <a href="{{ route('movein.index') }}" class="nav-link @yield('movein')">
+                         <i class="nav-icon fas fa-tachometer-alt"></i>
+                         <p>
+                             Move-in
+                         </p>
+                     </a>
+                 </li>
+                 <li class="nav-item has-treeview @yield('utilititree')">
+                     <a href="#" class="nav-link">
+                         <i class="nav-icon fas fa-copy"></i>
+                         <p>
+                             Utilities
+                             <i class="fas fa-angle-left right"></i>
+                         </p>
+                     </a>
+                     <ul class="nav nav-treeview">
+                         <li class="nav-item has-treeview @yield('categoriestree')">
+                             <a href="#" class="nav-link">
+                                 &emsp;<i class="far fa-circle nav-icon"></i>
+                                 <p>
+                                     Categories
+                                     <i class="fas fa-angle-left right"></i>
+                                 </p>
+                             </a>
+                             <ul class="nav nav-treeview">
+                                 <li class="nav-item">
+                                     <a href="{{ route('categoriesgroup.index') }}" class="nav-link @yield('categoriesgroup')">
+                                         &emsp;&emsp;<i class="far fa-dot-circle nav-icon"></i>
+                                         <p>Group</p>
+                                     </a>
+                                 </li>
+                                 <li class="nav-item">
+                                     <a href="{{ route('categories.index') }}" class="nav-link @yield('categories')">
+                                         &emsp;&emsp;<i class="far fa-dot-circle nav-icon"></i>
+                                         <p>Category</p>
+                                     </a>
+                                 </li>
+                             </ul>
+                         </li>
+                         <li class="nav-item">
+                             <a href="{{ route('brand.index') }}" class="nav-link @yield('brand')">
+                                 &emsp;<i class="nav-icon fas fa-tachometer-alt"></i>
+                                 <p>
+                                     Brand
+                                 </p>
+                             </a>
+                         <li class="nav-item">
+                             <a href="{{ route('vendor.index') }}" class="nav-link @yield('vendor')">
+                                 &emsp;<i class="nav-icon fas fa-tachometer-alt"></i>
+                                 <p>
+                                     Vendor
+                                 </p>
+                             </a>
+                         </li>
+                         <li class="nav-item">
+                             <a href="{{ route('bisnisunit.index') }}" class="nav-link @yield('bisnisunit')">
+                                 &emsp;<i class="nav-icon fas fa-tachometer-alt"></i>
+                                 <p>
+                                     Bisnis Unit
+                                 </p>
+                             </a>
+                         </li>
+                     </ul>
+                 </li>
+
+                 <li class="nav-item has-treeview @yield('locationtree')">
+                     <a href="#" class="nav-link">
+                         <i class="nav-icon fas fa-copy"></i>
+                         <p>
+                             Location
+                             <i class="fas fa-angle-left right"></i>
+                         </p>
+                     </a>
+                     <ul class="nav nav-treeview">
+                         <li class="nav-item">
+                             <a href="{{ route('site.index') }}" class="nav-link @yield('site')">
+                                 &emsp;<i class="nav-icon fas fa-tachometer-alt"></i>
+                                 <p>
+                                     Sites
+                                 </p>
+                             </a>
+                         </li>
+                         <li class="nav-item">
+                             <a href="{{ route('floor.index') }}" class="nav-link @yield('floor')">
+                                 &emsp;<i class="nav-icon fas fa-tachometer-alt"></i>
+                                 <p>
+                                     Floor
+                                 </p>
+                             </a>
+                         </li>
+                         <li class="nav-item">
+                             <a href="{{ route('room.index') }}" class="nav-link @yield('room')">
+                                 &emsp;<i class="nav-icon fas fa-tachometer-alt"></i>
+                                 <p>
+                                     Room
+                                 </p>
+                             </a>
+                         </li>
+                     </ul>
+                 </li>
+                 <li class="nav-item has-treeview @yield('settingtree')">
+                     <a href="#" class="nav-link">
+                         <i class="nav-icon fas fa-copy"></i>
+                         <p>
+                             Option
+                             <i class="fas fa-angle-left right"></i>
+                         </p>
+                     </a>
+                     <ul class="nav nav-treeview">
+                         <li class="nav-item">
+                             <a href="{{ route('users.index') }}" class="nav-link @yield('user')">
+                                 &emsp;<i class="nav-icon fas fa-tachometer-alt"></i>
+                                 <p>
+                                     User
+                                 </p>
+                             </a>
+                         </li>
+                         <li class="nav-item">
+                             <a href="{{ route('roles.index') }}" class="nav-link @yield('roles')">
+                                 &emsp;<i class="nav-icon fas fa-tachometer-alt"></i>
+                                 <p>
+                                     Roles
+                                 </p>
+                             </a>
+                         </li>
+                         <li class="nav-item">
+                             <a href="{{ route('permissions.index') }}" class="nav-link @yield('permissions')">
+                                 &emsp;<i class="nav-icon fas fa-tachometer-alt"></i>
+                                 <p>
+                                     Permission
+                                 </p>
+                             </a>
+                         </li>
+                     </ul>
+                 </li>
+                 <li class="nav-item has-treeview @yield('webtreeview')">
+                     <a href="#" class="nav-link">
+                         <i class="nav-icon fas fa-copy"></i>
+                         <p>
+                             WEB Options
+                             <i class="fas fa-angle-left right"></i>
+                         </p>
+                     </a>
+                     <ul class="nav nav-treeview">
+                         <li class="nav-item">
+                             <a href="{{ route('webnews.index') }}" class="nav-link @yield('webnews')">
+                                 <i class="far fa-circle nav-icon"></i>
+                                 <p>News</p>
+                             </a>
+                         </li>
+                         <li class="nav-item">
+                             <a href="{{ route('websolution.index') }}" class="nav-link @yield('websolution')">
+                                 <i class="far fa-circle nav-icon"></i>
+                                 <p>Solution</p>
+                             </a>
+                         </li>
+                     </ul>
+                 </li>
+
+                 {{-- <li class="nav-item">
             <a href="../widgets.html" class="nav-link">
               <i class="nav-icon fas fa-th"></i>
               <p>
@@ -624,9 +727,9 @@
               <p>Informational</p>
             </a>
           </li> --}}
-        </ul>
-      </nav>
-      <!-- /.sidebar-menu -->
-    </div>
-    <!-- /.sidebar -->
-  </aside>
+             </ul>
+         </nav>
+         <!-- /.sidebar-menu -->
+     </div>
+     <!-- /.sidebar -->
+ </aside>

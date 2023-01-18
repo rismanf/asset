@@ -44,7 +44,31 @@ class PermissionTableSeeder extends Seeder
             'floor-create',
             'floor-edit',
             'floor-delete',
-            'customer-list',
+            'room-list',
+            'room-create',
+            'room-edit',
+            'room-delete',
+            'brand-list',
+            'brand-create',
+            'brand-edit',
+            'brand-delete',
+            'bisnisunit-list',
+            'bisnisunit-create',
+            'bisnisunit-edit',
+            'bisnisunit-delete',
+            'vendor-list',
+            'vendor-create',
+            'vendor-edit',
+            'vendor-delete',
+            'category-list',
+            'category-create',
+            'category-edit',
+            'category-delete',
+            'asset-list',
+            'asset-create',
+            'asset-edit',
+            'asset-delete',
+            'customer-list',///asset
             'customer-create',
             'customer-edit',
             'customer-delete',
@@ -61,7 +85,6 @@ class PermissionTableSeeder extends Seeder
             'movein-edit',
             'movein-delete',
         ];
-
 
         foreach ($permissions as $permission) {
             Permission::create(['name' => $permission]);

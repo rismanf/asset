@@ -23,30 +23,35 @@ class CustomerController extends Controller
 
     public function index(Request $request)
     {
-
-        if (Auth::check()) {
-            if ($request->ajax()) {
-                $data = Customer::with('site')->orderby('id','desc');
-                return DataTables($data)
-                    ->addColumn('action', function ($row) {
-                        $btn = '<a href="' . route('customer.edit', $row->id) . '" class="edit btn btn-primary">Edit</a> ';
+        if ($request->ajax()) {
+            $user = auth()->user();
+            $data = Customer::with('site')->orderby('id', 'desc');
+            return DataTables($data)
+                ->addColumn('site', function ($row) {
+                    $btn = '';
+                    foreach ($row->site as $site) {
+                        $btn .= '<small class="badge badge-success">' . $site->site_name . '</small ><br>';
+                    }
+                    return $btn;
+                })
+                ->addColumn('action', function ($row) use ($user) {
+                    $btn = '';
+                    if ($user->can('customer-edit')) {
+                        $btn .= '<a href="' . route('customer.edit', $row->id) . '" class="edit btn btn-primary">Edit</a> ';
+                    }
+                    if ($user->can('customer-delete')) {
                         $btn .= '<a href="' . route('customer.delete', $row->id) . '"  class="delete btn btn-danger">Delete</a>';
-                        return $btn;
-                    })
-                    ->addColumn('site', function ($row) {
-                        $btn = '';
-                        foreach ($row->site as $site) {
-                            $btn .= '<small class="badge badge-success">'.$site->site_name.'</small ><br>';
-                        }
-                        return $btn;
-                    })
-                    ->rawColumns(['action','site'])
-                    ->make(true);
-            }
+                    }
 
-            return view('customer.index');
+                    $btn = '<a href="' . route('customer.edit', $row->id) . '" class="edit btn btn-primary">Edit</a> ';
+                    $btn .= '<a href="' . route('customer.delete', $row->id) . '"  class="delete btn btn-danger">Delete</a>';
+                    return $btn;
+                })
+                ->rawColumns(['action', 'site'])
+                ->make(true);
         }
-        return redirect()->route('logout');
+
+        return view('customer.index');
     }
 
     /**
@@ -56,7 +61,6 @@ class CustomerController extends Controller
      */
     public function create()
     {
-        
         $sites = Site::pluck('site_name', 'id')->all();
         return view('customer.create', compact('sites'));
     }
@@ -96,7 +100,7 @@ class CustomerController extends Controller
      */
     public function show($id)
     {
-       
+
         // return response()->json($respon);
 
         $user = Customer::find($id);

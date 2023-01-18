@@ -1,6 +1,12 @@
 <?php
 
 use App\Http\Controllers\AjaxController;
+use App\Http\Controllers\AssetController;
+use App\Http\Controllers\AssetUploadContorller;
+use App\Http\Controllers\BisnisUnitController;
+use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\CategoriesgroupController;
 use App\Http\Controllers\CheckpowerController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CustomerController;
@@ -12,8 +18,10 @@ use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RackController;
 use App\Http\Controllers\RequestvisitController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\RoomController;
 use App\Http\Controllers\SiteController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\VendorController;
 use App\Http\Controllers\WebnewsController;
 use App\Http\Controllers\WebsolutionController;
 use Illuminate\Support\Facades\Route;
@@ -35,13 +43,14 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::group(['middleware' => ['auth']], function () {
 
+Route::group(['middleware' => ['auth']], function () {
+    Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::controller(DropdownController::class)->group(function () {
         Route::get('getsitecustomer', 'sitecustomer')->name('getsitecustomer');
         Route::get('getfloorcustomer', 'floorcustomer')->name('getfloorcustomer');
         Route::get('getfloor', 'floor')->name('getfloor');
+        Route::get('getroom', 'room')->name('getroom');
     });
 
     Route::resource('news', NewsController::class);
@@ -50,6 +59,31 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('rack', RackController::class);
     Route::resource('checkpower', CheckpowerController::class);
     Route::resource('movein', MoveinController::class);
+    Route::resource('categories', CategoriesController::class);
+    Route::resource('categoriesgroup', CategoriesgroupController::class);
+    Route::resource('brand', BrandController::class);
+    Route::resource('bisnisunit', BisnisUnitController::class);
+    Route::resource('vendor', VendorController::class);
+
+    //asset
+    Route::resource('asset', AssetController::class);
+    Route::prefix('asset')->controller(AssetController::class)->group(function () {
+        Route::post('restore', 'restore')->name('asset.restore');
+        Route::post('forcedelete', 'forcedelete')->name('asset.forcedelete');
+        // Route::post('upload', 'upload')->name('asset.upload');
+        // Route::post('import', 'import')->name('asset.import');
+        // Route::post('export', 'export')->name('asset.export');
+    });
+
+    Route::prefix('assetupload')->controller(AssetUploadContorller::class)->group(function () {
+        Route::get('index', 'index')->name('assetupload.index');
+        Route::post('show', 'show')->name('assetupload.show');
+        Route::post('showerror', 'showerror')->name('assetupload.showerror');
+        Route::post('delete', 'delete')->name('assetupload.delete');
+        Route::post('import', 'import')->name('assetupload.import');
+        Route::post('export', 'export')->name('assetupload.export');
+    });
+
 
     Route::resource('customer', CustomerController::class);
     Route::get('customer/destroy/{id}', [CustomerController::class, 'destroy'])->name('customer.delete');
@@ -61,10 +95,37 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/rack_customer_check', 'rack_customer_check')->name('get.rack_customer_check');
     });
 
+
+    ///SUPERADMIN Role
     Route::group(['middleware' => ['role:superadmin']], function () {
         Route::resource('site', SiteController::class);
         Route::resource('floor', FloorController::class);
+        Route::resource('room', RoomController::class);
 
+        //restore and forcedelete
+        Route::controller(CategoriesgroupController::class)->group(function () {
+            Route::post('categoriesgroup/restore', 'restore')->name('categoriesgroup.restore');
+            Route::post('categoriesgroup/forcedelete', 'forcedelete')->name('categoriesgroup.forcedelete');
+        });
+
+        Route::controller(CategoriesController::class)->group(function () {
+            Route::post('categories/restore', 'restore')->name('categories.restore');
+            Route::post('categories/forcedelete', 'forcedelete')->name('categories.forcedelete');
+        });
+        Route::controller(BrandController::class)->group(function () {
+            Route::post('brand/restore', 'restore')->name('brand.restore');
+            Route::post('brand/forcedelete', 'forcedelete')->name('brand.forcedelete');
+        });
+        Route::controller(VendorController::class)->group(function () {
+            Route::post('vendor/restore', 'restore')->name('vendor.restore');
+            Route::post('vendor/forcedelete', 'forcedelete')->name('vendor.forcedelete');
+        });
+        Route::controller(BisnisUnitController::class)->group(function () {
+            Route::post('bisnisunit/restore', 'restore')->name('bisnisunit.restore');
+            Route::post('bisnisunit/forcedelete', 'forcedelete')->name('bisnisunit.forcedelete');
+        });
+
+        //master
         Route::resource('users', UserController::class);
         Route::controller(UserController::class)->group(function () {
             Route::get('users/destroy/{id}', 'destroy')->name('users.delete');

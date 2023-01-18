@@ -1,4 +1,7 @@
 @extends('layouts.app')
+@section('settingtree', 'menu-open')
+@section('permissions', 'active')
+
 @section('content')
 <div class="container">
     <div class="justify-content-center">

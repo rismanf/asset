@@ -18,8 +18,13 @@ return new class extends Migration
             $table->string('site_name', 100);
             $table->string('address', 200)->nullable();
             $table->string('phone', 20)->nullable();
+            $table->string('city', 20)->nullable();
             $table->string('latitude', 30)->nullable();
             $table->string('longitude', 30)->nullable();
+            $table->integer('created_by_id')->default(1);
+            $table->integer('updated_by_id')->nullable();
+            $table->integer('deleted_by_id')->nullable();
+            $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }

@@ -17,7 +17,7 @@ class SiteSeeder extends Seeder
      */
     public function run()
     {
-        $campus = Site::create(['site_name' => 'Site HDC-Cikarang Campus 1']);
+        $campus = Site::create(['site_name' => 'HDC-Cikarang Campus 1']);
         $campus_id = $campus->id;
         $floor = [
             '1F',
@@ -42,7 +42,7 @@ class SiteSeeder extends Seeder
             Floor::create(['floor_name' => $floor, 'site_id' => $campus_id]);
         }
 
-        $office = Site::create(['site_name' => 'Site HDC-Cikarang Office']);
+        $office = Site::create(['site_name' => 'HDC-Cikarang Office']);
         $office_id = $office->id;
         $floor = [
             '1F',
@@ -56,8 +56,8 @@ class SiteSeeder extends Seeder
             Floor::create(['floor_name' => $floor, 'site_id' => $office_id]);
         }
 
-        Site::create(['site_name' => 'Site Serpong']);
-        Site::create(['site_name' => 'Site Sentul']);
-        Site::create(['site_name' => 'Site Surabaya']);
+        Site::create(['site_name' => 'DC Serpong']);
+        Site::create(['site_name' => 'DC Sentul']);
+        Site::create(['site_name' => 'DC Surabaya']);
     }
 }

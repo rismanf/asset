@@ -12,6 +12,12 @@ class Floor extends Model
     protected $fillable = [
         'floor_name',
         'site_id',
+        'sector_id',
+        'created_by_id',
+        'updated_by_id',
+        'updated_by_id',
+        'deleted_by_id',
+        'active',
     ];
 
     public function site()

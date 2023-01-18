@@ -1,4 +1,5 @@
 @extends('layouts.admin')
+@section('settingtree', 'menu-open')
 @section('user', 'active')
 
 @section('style')
@@ -100,17 +101,22 @@
                                     <span class="text-danger">{{ $errors->first('roles') }}</span>
                                 @endif
                             </div>
-                            <div class="form-group">
-                                <label for="sites" class="form-label">Site</label>
-                                <select class="select2" multiple="multiple" name="sites[]" data-placeholder="sites"
-                                    style="width: 100%;">
-                                    @foreach ($sites as $id=>$name)
-                                        <option value="{{ $name }}">{{ $id }}</option>
-                                    @endforeach
-                                </select>
-                                @if ($errors->has('sites'))
-                                    <span class="text-danger">{{ $errors->first('sites') }}</span>
-                                @endif
+                            <div class="col-xs-12 col-sm-12 col-md-12">
+                                <div class="form-group">
+                                    <strong>Site:</strong>
+                                    @if ($errors->has('sites'))
+                                        <span class="text-danger">{{ $errors->first('sites') }}</span>
+                                    @endif
+                                    <br />
+                                    <div class="row">
+                                        @foreach ($sites as $id => $name)
+                                            <div class="col-xs-12 col-sm-3 col-md-3">
+                                                <label>{{ Form::checkbox('sites[]', $id, false, ['class' => 'name']) }}
+                                                    {{ $name }}</label>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label for="role" class="form-label">customers</label>

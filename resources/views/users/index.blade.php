@@ -1,4 +1,6 @@
 @extends('layouts.admin')
+@section('settingtree', 'menu-open')
+@section('user', 'active')
 
 @section('content')
 <div class="container">

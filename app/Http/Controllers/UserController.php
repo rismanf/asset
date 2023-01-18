@@ -13,6 +13,7 @@ use Spatie\Permission\Models\Role;
 use DB;
 use Hash;
 use DataTables;
+use Illuminate\Auth\Access\Gate;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 
@@ -25,23 +26,40 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        if (Auth::check()) {
-            if ($request->ajax()) {
-                $data = User::latest()->get();
-                return DataTables::of($data)
-                    ->addIndexColumn()
-                    ->addColumn('action', function ($row) {
-                        $btn = '<a href="' . route('users.edit', $row->id) . '" class="edit btn btn-primary">Edit</a> ';
-                        $btn .= '<a href="' . route('users.delete', $row->id) . '"  class="delete btn btn-danger">Delete</a>';
-                        return $btn;
-                    })
-                    ->rawColumns(['action'])
-                    ->make(true);
-            }
+        if ($request->ajax()) {
+            $user = auth()->user();
 
-            return view('users.admin_index');
+            $data = User::with('site')->orderby('id', 'desc');
+            return DataTables($data)
+                ->addColumn('role', function ($row) {
+                    $btn = '';
+                    foreach ($row->getRoleNames()  as $role) {
+                        $btn .= '<small class="badge badge-success">' . $role . '</small ><br>';
+                    }
+                    return $btn;
+                })
+                ->addColumn('site', function ($row) {
+                    $btn = '';
+                    foreach ($row->site as $site) {
+                        $btn .= '<small class="badge badge-success">' . $site->site_name . '</small ><br>';
+                    }
+                    return $btn;
+                })
+                ->addColumn('action', function ($row) use ($user) {
+                    $btn = '';
+                    if ($user->can('user-edit')) {
+                        $btn .= '<a href="' . route('users.edit', $row->id) . '" class="edit btn btn-primary">Edit</a> ';
+                    }
+                    if ($user->can('user-delete')) {
+                        $btn .= '<a href="' . route('users.delete', $row->id) . '"  class="delete btn btn-danger">Delete</a>';
+                    }
+                    return $btn;
+                })
+                ->rawColumns(['action', 'role', 'site'])
+                ->make(true);
         }
-        return redirect()->route('logout');
+
+        return view('users.admin_index');
     }
 
     /**
@@ -52,8 +70,8 @@ class UserController extends Controller
     public function create()
     {
         $roles = Role::pluck('name', 'name')->all();
-        $sites = Site::pluck('id','site_name')->all();
-        $customers = Customer::pluck('id','customer_name')->all();
+        $sites = Site::pluck('site_name', 'id')->all();
+        $customers = Customer::pluck('customer_name', 'id')->all();
         return view('users.create', compact('roles', 'sites', 'customers'));
     }
 
@@ -88,14 +106,7 @@ class UserController extends Controller
         try {
             $user = User::create($input);
             $user->assignRole($request->input('roles'));
-            $userId = $user->id;
-            foreach ($request->sites as $list) {
-                User_relation::create([
-                    'user_id' => $userId,
-                    'relation' => 'sites',
-                    'relation_id' => $list,
-                ]);
-            }
+            $user->site()->attach($request->input('sites'));
 
             return redirect()->route('users.index')
                 ->with('success', 'User created successfully');
@@ -127,12 +138,14 @@ class UserController extends Controller
     {
         $user = User::find($id);
         $roles = Role::pluck('name', 'name')->all();
-        $sites = Site::pluck('site_name', 'site_name')->all();
+        $sites = Site::pluck('site_name', 'id')->all();
         $customers = Customer::pluck('customer_name', 'customer_name')->all();
         $userRole = $user->roles->pluck('name', 'name')->all();
-        // $userRelation = 
+        $usersite = DB::table("site_user")->where("site_user.user_id", $id)
+            ->pluck('site_user.site_id')
+            ->all();
 
-        return view('users.edit', compact('user', 'roles', 'userRole'));
+        return view('users.edit', compact('user', 'roles', 'customers', 'sites', 'userRole', 'usersite'));
     }
 
     /**
@@ -161,7 +174,9 @@ class UserController extends Controller
         $user = User::find($id);
         $user->update($input);
         DB::table('model_has_roles')->where('model_id', $id)->delete();
+        DB::table('site_user')->where('user_id', $id)->delete();
 
+        $user->site()->attach($request->input('sites'));
         $user->assignRole($request->input('roles'));
 
         return redirect()->route('users.index')

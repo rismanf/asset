@@ -1,4 +1,5 @@
 @extends('layouts.admin')
+@section('settingtree', 'menu-open')
 @section('user', 'active')
 
 @section('style')
@@ -58,6 +59,8 @@
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Mobile</th>
+                                <th>Role</th>
+                                <th>Site</th>
                                 <th>Action</th>
                             </tr>
                         </thead>
@@ -90,8 +93,8 @@
                 serverSide: true,
                 ajax: "{{ route('users.index') }}",
                 columns: [{
-                        data: 'DT_RowIndex',
-                        name: 'DT_RowIndex'
+                        data: 'id',
+                        name: 'id'
                     },
                     {
                         data: 'name',
@@ -104,6 +107,14 @@
                     {
                         data: 'phone',
                         name: 'phone'
+                    },
+                    {
+                        data: 'role',
+                        name: 'role'
+                    },
+                    {
+                        data: 'site',
+                        name: 'site'
                     },
                     {
                         data: 'action',
