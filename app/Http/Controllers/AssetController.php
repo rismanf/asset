@@ -40,7 +40,7 @@ class AssetController extends Controller
     {
         if ($request->ajax()) {
             $user = auth()->user();
-            $data = Asset::with('site','floor');
+            $data = Asset::with('site', 'floor');
             if ($user->hasRole('superadmin', 'admin')) {
                 $data->withTrashed();
             }
@@ -54,8 +54,8 @@ class AssetController extends Controller
                 ->addColumn('site', function ($row) {
 
                     $btn = '<small class="badge badge-success">' . $row->site->site_name . '</small ><br>';
-                    $btn .= ($row->floor_id) ?'<small class="badge badge-success">' . $row->floor->floor_name . '</small ><br>':'';
-                    $btn .= ($row->room_id) ?'<small class="badge badge-success">' . $row->room->room_name . '</small ><br>':'';
+                    $btn .= ($row->floor_id) ? '<small class="badge badge-success">' . $row->floor->floor_name . '</small ><br>' : '';
+                    $btn .= ($row->room_id) ? '<small class="badge badge-success">' . $row->room->room_name . '</small ><br>' : '';
 
                     return $btn;
                 })
@@ -83,8 +83,8 @@ class AssetController extends Controller
                 ->rawColumns(['action', 'site'])
                 ->make(true);
         }
-
-        return view('asset.index');
+        $site = Site::all();
+        return view('asset.index', compact('site'));
     }
 
     /**
@@ -147,9 +147,9 @@ class AssetController extends Controller
         $category = AssetCategory::pluck('category_name', 'id')->all();
         $vendor = Vendor::pluck('vendor_name', 'id')->all();
         $site = Site::pluck('site_name', 'id')->all();
-        $floor = Floor::where('site_id','=',$asset->site_id)->pluck('floor_name', 'id')->all();
-        $room = Room::where('floor_id','=',$asset->floor_id)->pluck('room_name', 'id')->all();
-        return view('asset.edit', compact('asset','brand', 'category', 'vendor', 'site','floor','room'));
+        $floor = Floor::where('site_id', '=', $asset->site_id)->pluck('floor_name', 'id')->all();
+        $room = Room::where('floor_id', '=', $asset->floor_id)->pluck('room_name', 'id')->all();
+        return view('asset.edit', compact('asset', 'brand', 'category', 'vendor', 'site', 'floor', 'room'));
     }
 
     /**

@@ -49,6 +49,9 @@
                     @can('asset-create')
                         <p><a class="btn btn-success" href="{{ route('asset.create') }}"> Create New Asset</a> </p>
                     @endcan
+                    <div class="row mb-2">
+                        dropdown
+                    </div>
                     <table class="table yajra-dt">
                         <thead>
                             <tr>
@@ -103,7 +106,9 @@
                     },
                     {
                         data: 'site',
-                        name: 'site'
+                        name: 'site',
+                        orderable: false,
+                        searchable: false
                     },
                     {
                         data: 'updated_at',
@@ -116,8 +121,8 @@
                     {
                         data: 'action',
                         name: 'action',
-                        orderable: true,
-                        searchable: true
+                        orderable: false,
+                        searchable: false
                     },
                 ]
             });

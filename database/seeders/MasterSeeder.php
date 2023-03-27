@@ -21,7 +21,7 @@ class MasterSeeder extends Seeder
         $AssetCategoryGroup = [
             [
                 'category_group_name' => 'BUILDING',
-                'category_group_code' => 'DB'
+                'category_group_code' => 'BD'
             ],
             [
                 'category_group_name' => 'COMPUTER',

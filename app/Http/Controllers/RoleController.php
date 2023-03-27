@@ -44,7 +44,7 @@ class RoleController extends Controller
                         $btn .= '<a href="' . route('roles.edit', $row->id) . '" class="edit btn btn-primary">Edit</a> ';
                     }
                     if ($user->can('role-delete')) {
-                        $btn .= '<a href="' . route('roles.delete', $row->id) . '"  class="delete btn btn-danger">Delete</a>';
+                        $btn .= '<a href="' . route('roles.delete', $row->id) . '" data-method="delete" class="delete btn btn-danger">Delete</a>';
                     }
                     return $btn;
                 })
